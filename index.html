@@ -84,39 +84,24 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 .hero .rot span.out{opacity:0;transform:translateY(-.6em);transition-duration:.25s}
 .hero .sector .pre{color:var(--body-on-dark);font-weight:500}
 .hero .lead{margin-top:18px;max-width:46ch}
-.hero .svc{margin-top:20px;font-family:var(--display);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:2}
+.hero .svc{max-width:540px;margin-top:20px;font-family:var(--display);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:2}
 .hero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
-/* work wall */
-.wall{position:absolute;z-index:1;top:0;bottom:0;right:0;width:min(50%,760px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28%);mask-image:linear-gradient(90deg,transparent 0,#000 28%)}
-.wall .tilt{position:absolute;inset:-18% -8% -18% 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;transform:rotate(-7deg);transform-origin:center}
-.wall .col{display:flex;flex-direction:column;gap:16px;animation:wallUp var(--dur,46s) linear infinite;will-change:transform}
-.wall .col:nth-child(2){animation-direction:reverse;--dur:54s}
-.wall .col:nth-child(3){--dur:40s}
-.wall:hover .col,.wall:focus-within .col{animation-play-state:paused}
-@keyframes rise{from{opacity:0;transform:translateY(.35em)}to{opacity:1;transform:none}}
-@keyframes wallUp{to{transform:translateY(-50%)}}
-.tile{position:relative;display:block;width:100%;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--ink-2);flex:none}
-.tile img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .4s}
-.tile .cap{position:absolute;inset:auto 0 0 0;padding:28px 14px 12px;background:linear-gradient(transparent,rgba(20,20,20,.88));text-align:left;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s}
-.tile .cap b{display:block;font-family:var(--display);font-size:14px;font-weight:700;color:var(--paper)}
-.tile .cap i{font-style:normal;font-family:var(--display);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
-.wall:hover .tile img{filter:brightness(.6) saturate(.8)}
-.wall .tile:hover img,.wall .tile:focus-visible img{filter:none;transform:scale(1.06)}
-.tile:hover .cap,.tile:focus-visible .cap{opacity:1;transform:none}
-.hero .hint{position:absolute;z-index:2;right:var(--gutter-r);bottom:22px;font-family:var(--display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(253,253,252,.6);background:rgba(20,20,20,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:8px 14px;border-radius:999px;pointer-events:none}
+/* robot visual: eyes follow the cursor */
+.bot{position:absolute;z-index:1;top:0;bottom:0;right:0;width:68%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 26%);mask-image:linear-gradient(90deg,transparent 0,#000 26%)}
+.bot svg{display:block;width:100%;height:100%}
+.bot .eye-glow{filter:url(#eyeBlur);opacity:.55;mix-blend-mode:screen}
 .hero .scroll{position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);width:26px;height:42px;border:1.5px solid rgba(253,253,252,.35);border-radius:14px;display:none}
 .hero .scroll::after{content:"";position:absolute;left:50%;top:8px;width:3px;height:8px;margin-left:-1.5px;border-radius:2px;background:var(--orange);animation:cue 1.8s ease-in-out infinite}
 @keyframes cue{0%{opacity:0;transform:translateY(-2px)}40%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
 @media (min-width:861px){.hero .scroll{display:block;left:calc(var(--gutter-l) + max(0px,(100vw - 1280px)/2) + 13px)}}
 @media (max-width:860px){
-  .hero{flex-direction:column;align-items:stretch;min-height:0;padding-bottom:0}
-  .hero>.wrap{order:1}.wall{order:2}
+  .hero{flex-direction:column;align-items:stretch;min-height:0;padding-top:0;padding-bottom:56px}
+  .hero .copy{margin-top:-28px;position:relative}
+  .hero>.wrap{order:2}.bot{order:1}
   .hero .copy{max-width:none}
-  .wall{position:relative;width:auto;height:360px;margin-top:44px;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 78%,transparent);mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 78%,transparent)}
-  .wall .tilt{inset:-30% -12%;gap:12px}.wall .col{gap:12px}
-  .hero .hint{display:none}
+  .bot{position:relative;width:auto;height:min(96vw,520px);margin:0 calc(-1*var(--gutter-r)) 0 calc(-1*var(--gutter-l));-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
 }
-@media (prefers-reduced-motion:reduce){.hero h1 .w,.wall .col,.hero .scroll::after{animation:none}.hero .glow{transition:none}.hero .rot span{transition:none}}
+@media (prefers-reduced-motion:reduce){.hero h1 .w,.hero .scroll::after{animation:none}.hero .glow{transition:none}.hero .rot span{transition:none}}
 
 /* marquee */
 .marquee{border-top:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);padding-block:28px;overflow:hidden;position:relative}
@@ -339,7 +324,22 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 
 <main id="top">
 <section class="hero dark" id="hero"><div class="glow"></div>
-<div class="wall" id="wall" aria-label="Selected projects"><div class="tilt" id="wallTilt"></div></div>
+<div class="bot" aria-hidden="true"><svg id="botSvg" viewBox="0 0 1671 941" preserveAspectRatio="xMidYMid slice">
+<defs>
+<radialGradient id="sclera" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#A99086"/><stop offset=".55" stop-color="#7E6153"/><stop offset="1" stop-color="#3E2519"/></radialGradient>
+<radialGradient id="irisG"><stop offset="0" stop-color="#FFE08A"/><stop offset=".42" stop-color="#FF9A1F"/><stop offset=".78" stop-color="#F24405"/><stop offset="1" stop-color="#4A0E00"/></radialGradient>
+<linearGradient id="lidShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A0B05" stop-opacity=".75"/><stop offset=".45" stop-color="#1A0B05" stop-opacity="0"/><stop offset="1" stop-color="#1A0B05" stop-opacity=".35"/></linearGradient>
+<filter id="eyeBlur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2"/></filter>
+<clipPath id="lidL"><ellipse id="lidEL" cx="792" cy="232.6" rx="16.5" ry="5.8"/></clipPath>
+<clipPath id="lidR"><ellipse id="lidER" cx="865.5" cy="233.4" rx="17.5" ry="5.8"/></clipPath>
+<g id="irisShape"><circle r="6.4" fill="url(#irisG)"/><circle r="6.4" fill="none" stroke="#2A0800" stroke-width=".8" opacity=".7"/><circle r="2.5" fill="#160603"/><circle cx="-1.9" cy="-1.9" r=".95" fill="#FFF6E8" opacity=".85"/></g>
+</defs>
+<image href="img/hero_robot.jpg" width="1671" height="941"/>
+<g clip-path="url(#lidL)"><ellipse cx="792" cy="232.6" rx="17" ry="6.5" fill="url(#sclera)"/><use class="iris" data-cx="790" data-cy="232.6" href="#irisShape" x="790" y="232.6"/><ellipse cx="792" cy="232.6" rx="17" ry="6.5" fill="url(#lidShade)"/></g>
+<g clip-path="url(#lidR)"><ellipse cx="865.5" cy="233.4" rx="18" ry="6.5" fill="url(#sclera)"/><use class="iris" data-cx="865" data-cy="233.6" href="#irisShape" x="865" y="233.6"/><ellipse cx="865.5" cy="233.4" rx="18" ry="6.5" fill="url(#lidShade)"/></g>
+<circle class="eye-glow" data-cx="790" data-cy="232.6" cx="790" cy="232.6" r="6" fill="#FF7A1A"/>
+<circle class="eye-glow" data-cx="865" data-cy="233.6" cx="865" cy="233.6" r="6" fill="#FF7A1A"/>
+</svg></div>
 <div class="wrap"><div class="copy">
     <p class="eyebrow">International creative agency · Beirut · Dubai</p>
     <h1><span class="w">Creative</span><br><span class="w"><em>Agency</em></span></h1>
@@ -348,7 +348,6 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
     <p class="svc">Branding · Design · Photography · Videography · Web Design · UX/UI</p>
     <div class="actions"><a class="cta" href="#branding">See the work</a><a class="cta ghost" href="#contact">Start a project</a></div>
 </div></div>
-<p class="hint">Hover to pause · click a project</p>
 <a class="scroll" href="#about" aria-label="Scroll down"></a>
 </section>
 
@@ -496,17 +495,38 @@ setTimeout(() => $$('.reveal').forEach(el => el.classList.add('in')), 4000);
 /* hero glow follows the cursor */
 const hero = $('#hero');
 
-/* hero work wall */
+/* hero robot: eyes follow the cursor, occasional blink */
 (() => {
-  const cols = [
-    [['agleam',2],['laissetomber',2],['panem',2],['terracotta',3],['noma',2],['gam',3]],
-    [['matchamates',2],['pastello',2],['kur',2],['puffik',2],['minimodes',3],['drz',2]],
-    [['matchamates',3],['nude',2],['halakastoun',2],['salmontini',2],['panem',3],['meraki',2]]
-  ];
-  const tile = ([k, n], dup) => { const b = DATA.brands[caseIndex[k]]; if (!b) return '';
-    return `<button type="button" class="tile" data-case="${k}"${dup ? ' tabindex="-1" aria-hidden="true"' : ''} aria-label="Open ${esc(b.name)} project"><img src="img/gal_${k}_${n}.jpg" alt="" loading="${dup ? 'lazy' : 'eager'}" decoding="async"><span class="cap"><b>${esc(b.name)}</b><i>${esc(b.sector)}</i></span></button>`; };
-  $('#wallTilt').innerHTML = cols.map(c => `<div class="col">${c.map(t => tile(t)).join('')}${c.map(t => tile(t, 1)).join('')}</div>`).join('');
-  $('#wall').addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) openBrand(caseIndex[t.dataset.case]); });
+  const svg = $('#botSvg'); if (!svg) return;
+  const parts = $$('.iris, .eye-glow', svg);
+  const MX = 7.5, MY = 2.6;
+  let tx = 0, ty = 0, x = 0, y = 0, last = 0;
+  const aim = (cx, cy) => {
+    const m = svg.getScreenCTM(); if (!m) return;
+    const ex = 828 * m.a + m.e, ey = 233 * m.d + m.f;
+    const dx = cx - ex, dy = cy - ey, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260);
+    tx = dx / d * MX * k; ty = dy / d * MY * k * 1.6; ty = Math.max(-MY, Math.min(MY, ty)); last = performance.now();
+  };
+  addEventListener('pointermove', e => aim(e.clientX, e.clientY), {passive: true});
+  addEventListener('pointerdown', e => aim(e.clientX, e.clientY), {passive: true});
+  const draw = () => {
+    if (performance.now() - last > 3500) { const t = performance.now() / 1000; tx = Math.sin(t * .7) * MX * .55; ty = Math.sin(t * 1.1) * MY * .4; }
+    x += (tx - x) * .14; y += (ty - y) * .14;
+    parts.forEach(p => { const cx = +p.dataset.cx + x, cy = +p.dataset.cy + y; if (p.tagName === 'use') { p.setAttribute('x', cx); p.setAttribute('y', cy); } else { p.setAttribute('cx', cx); p.setAttribute('cy', cy); } });
+    requestAnimationFrame(draw);
+  };
+  if (!reduce) {
+    requestAnimationFrame(draw);
+    const lids = [$('#lidEL'), $('#lidER')], glows = $$('.eye-glow', svg);
+    const blink = () => {
+      lids.forEach(l => l.setAttribute('ry', '0.4')); glows.forEach(g => g.style.opacity = '0');
+      setTimeout(() => { lids.forEach(l => l.setAttribute('ry', '5.8')); glows.forEach(g => g.style.opacity = ''); }, 130);
+      setTimeout(blink, 3200 + Math.random() * 3800);
+    };
+    setTimeout(blink, 2500);
+  }
+})();
+(() => {
   const words = $$('#rot span'); let w = 0;
   if (!reduce) setInterval(() => { const o = words[w]; o.classList.remove('on'); o.classList.add('out'); setTimeout(() => o.classList.remove('out'), 450); w = (w + 1) % words.length; words[w].classList.add('on'); }, 2600);
 })();if (!reduce && matchMedia('(pointer:fine)').matches) hero.addEventListener('mousemove', e => { const r = hero.getBoundingClientRect(); hero.style.setProperty('--mx', (e.clientX - r.left) + 'px'); hero.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
