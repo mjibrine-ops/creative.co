@@ -206,15 +206,15 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 /* branding: curved 3D carousel */
 .works{display:none!important}
 .bcar{position:relative;margin-top:8px;user-select:none;-webkit-user-select:none}
-.bstage{position:relative;height:calc(var(--cw) * 1.354 + 130px);perspective:1300px;perspective-origin:50% 50%;overflow:hidden;touch-action:pan-y;cursor:grab;--cw:clamp(210px,27vw,370px);margin-inline:calc(50% - 50vw)}
+.bstage{position:relative;height:calc(var(--cw) * 1.354 * 1.2 + 120px);perspective:1300px;perspective-origin:50% 50%;overflow:hidden;touch-action:pan-y;cursor:grab;--cw:clamp(210px,27vw,370px);margin-inline:calc(50% - 50vw)}
 .bstage.drag{cursor:grabbing}
-.bring{position:absolute;left:50%;top:65px;width:0;height:0;transform-style:preserve-3d}
-.bcard{position:absolute;left:0;top:0;width:var(--cw);display:flex;flex-direction:column;margin-left:calc(var(--cw) / -2);border-radius:18px;overflow:hidden;background:#1E1E1E;backface-visibility:hidden;will-change:transform,opacity;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.bring{position:absolute;left:50%;top:calc(60px + var(--cw) * .135);width:0;height:0;transform-style:preserve-3d}
+.bcard{position:absolute;left:0;top:0;width:var(--cw);display:flex;flex-direction:column;transform-origin:50% 50%;margin-left:calc(var(--cw) / -2);border-radius:18px;overflow:hidden;background:#1E1E1E;backface-visibility:hidden;will-change:transform,opacity;box-shadow:0 30px 60px rgba(0,0,0,.35)}
 .bcard img{width:100%;object-fit:cover;display:block;pointer-events:none;-webkit-user-drag:none}
 .bcard img.tile{aspect-ratio:2.83}
 .bcard img.grid{aspect-ratio:1}
 .bcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.35));opacity:var(--shade,0);transition:opacity .3s}
-.bbar{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:-30px;position:relative;z-index:2}
+.bbar{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:-24px;position:relative;z-index:2}
 .binfo{display:grid;justify-items:center;gap:4px;min-width:min(56vw,320px);text-align:center}
 .bname{font-family:var(--display);font-size:clamp(22px,2.2vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink);transition:opacity .35s ease,transform .35s ease}
 .bname.swap{opacity:0;transform:translateY(8px)}
@@ -723,7 +723,9 @@ $$('.chip').forEach(c => c.addEventListener('click', () => { cat = c.dataset.cat
     cards.forEach((c, k) => {
       let d = k - pos; if (n > 2) d = ((d % n) + n + n / 2) % n - n / 2;
       const a = d * step, ad = Math.abs(d);
-      c.style.transform = `translateZ(${R}px) rotateY(${(-a).toFixed(3)}deg) translateZ(${-R}px)`;
+      const sc = 1 + .2 * Math.max(0, 1 - ad);
+      c.style.transform = `translateZ(${R}px) rotateY(${(-a).toFixed(3)}deg) translateZ(${-R}px) scale(${sc.toFixed(4)})`;
+      c.style.filter = ad < .02 ? 'none' : `blur(${Math.min(6, ad * 5).toFixed(2)}px) brightness(${(1 - Math.min(.35, ad * .3)).toFixed(3)})`;
       c.style.opacity = ad > 2.6 ? 0 : ad > 1.6 ? (2.6 - ad).toFixed(3) : 1;
       c.style.zIndex = String(100 - Math.round(ad * 10));
       c.style.setProperty('--shade', Math.min(1, ad).toFixed(2));
