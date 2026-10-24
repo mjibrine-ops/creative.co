@@ -203,6 +203,26 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 @media (max-width:560px){.logos{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}}
 
 /* branding */
+/* branding: curved 3D carousel */
+.works{display:none!important}
+.bcar{position:relative;margin-top:8px;user-select:none;-webkit-user-select:none}
+.bstage{position:relative;height:calc(var(--cw) * 1.354 + 130px);perspective:1300px;perspective-origin:50% 50%;overflow:hidden;touch-action:pan-y;cursor:grab;--cw:clamp(210px,27vw,370px);margin-inline:calc(50% - 50vw)}
+.bstage.drag{cursor:grabbing}
+.bring{position:absolute;left:50%;top:65px;width:0;height:0;transform-style:preserve-3d}
+.bcard{position:absolute;left:0;top:0;width:var(--cw);display:flex;flex-direction:column;margin-left:calc(var(--cw) / -2);border-radius:18px;overflow:hidden;background:#1E1E1E;backface-visibility:hidden;will-change:transform,opacity;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.bcard img{width:100%;object-fit:cover;display:block;pointer-events:none;-webkit-user-drag:none}
+.bcard img.tile{aspect-ratio:2.83}
+.bcard img.grid{aspect-ratio:1}
+.bcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.35));opacity:var(--shade,0);transition:opacity .3s}
+.bbar{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:-30px;position:relative;z-index:2}
+.binfo{display:grid;justify-items:center;gap:4px;min-width:min(56vw,320px);text-align:center}
+.bname{font-family:var(--display);font-size:clamp(22px,2.2vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink);transition:opacity .35s ease,transform .35s ease}
+.bname.swap{opacity:0;transform:translateY(8px)}
+.bsec{font-family:var(--display);color:var(--orange)!important;font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+.bnum{font-family:var(--display);font-size:11px;letter-spacing:.2em;color:var(--muted);font-variant-numeric:tabular-nums}
+.barrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:22px;line-height:1;color:var(--ink);transition:background .2s,color .2s,border-color .2s}
+.barrow:hover{background:var(--orange);border-color:var(--orange);color:#141414}
+@media (prefers-reduced-motion:reduce){.bname{transition:none}}
 .works{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 22px}
 .work{min-width:0}
 .work .open{position:relative;display:block;width:100%;text-align:left;border-radius:16px;overflow:hidden;background:var(--paper-2)}
@@ -413,6 +433,10 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 <section id="branding" class="band light" style="background:var(--paper-2)"><div class="wrap">
   <div class="head reveal"><div><p class="eyebrow">Branding</p><h2 class="title">Sixteen brand stories, from the mark to packaging, uniforms and signage.</h2></div><p class="count" id="brandcount">16 projects · click one to open</p></div>
   <div class="chips" data-group="works" role="group" aria-label="Filter by sector"><button type="button" class="chip on" data-cat="all">All work</button><button type="button" class="chip" data-cat="beauty">Beauty &amp; wellness</button><button type="button" class="chip" data-cat="food">Food &amp; drink</button><button type="button" class="chip" data-cat="fashion">Fashion &amp; lifestyle</button><button type="button" class="chip" data-cat="home">Home, interiors &amp; industry</button></div>
+  <div class="bcar reveal" id="bcar" aria-roledescription="carousel" aria-label="Brand identities">
+    <div class="bstage" id="bstage"><div class="bring" id="bring"></div></div>
+    <div class="bbar"><button type="button" class="barrow" id="bprev" aria-label="Previous project">‹</button><div class="binfo"><span class="bname" id="btitle">Gam</span><span class="bsec" id="bsec"></span><span class="bnum" id="bnum"></span></div><button type="button" class="barrow" id="bnext" aria-label="Next project">›</button></div>
+  </div>
   <div class="works" id="works"><article class="work" data-cat="beauty" data-i="0"><button class="open" type="button" aria-label="Open Gam case study"><img class="tile" src="img/brand_gam_logo.jpg" alt="Gam logo tile" loading="lazy"><img class="grid" src="img/brand_gam_grid.jpg" alt="Gam brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Beauty product brand</p><h3>Gam</h3><p class="scope">Logo · Packaging · Art direction</p></div></article><article class="work" data-cat="home" data-i="1"><button class="open" type="button" aria-label="Open Terra Cotta case study"><img class="tile" src="img/brand_terracotta_logo.jpg" alt="Terra Cotta logo tile" loading="lazy"><img class="grid" src="img/brand_terracotta_grid.jpg" alt="Terra Cotta brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Clay brand</p><h3>Terra Cotta</h3><p class="scope">Logo · Packaging · Signage</p></div></article><article class="work" data-cat="fashion" data-i="2"><button class="open" type="button" aria-label="Open Agleam case study"><img class="tile" src="img/brand_agleam_logo.jpg" alt="Agleam logo tile" loading="lazy"><img class="grid" src="img/brand_agleam_grid.jpg" alt="Agleam brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Jewelry brand</p><h3>Agleam</h3><p class="scope">Logo · Packaging · Storefront</p></div></article><article class="work" data-cat="beauty" data-i="3"><button class="open" type="button" aria-label="Open Nude case study"><img class="tile" src="img/brand_nude_logo.jpg" alt="Nude logo tile" loading="lazy"><img class="grid" src="img/brand_nude_grid.jpg" alt="Nude brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Hair care brand</p><h3>Nude</h3><p class="scope">Logo · Packaging · Stationery</p></div></article><article class="work" data-cat="food" data-i="4"><button class="open" type="button" aria-label="Open Pastello case study"><img class="tile" src="img/brand_pastello_logo.jpg" alt="Pastello logo tile" loading="lazy"><img class="grid" src="img/brand_pastello_grid.jpg" alt="Pastello brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Restaurant</p><h3>Pastello</h3><p class="scope">Logo · Menu · Signage</p></div></article><article class="work" data-cat="fashion" data-i="5"><button class="open" type="button" aria-label="Open Minimodes case study"><img class="tile" src="img/brand_minimodes_logo.jpg" alt="Minimodes logo tile" loading="lazy"><img class="grid" src="img/brand_minimodes_grid.jpg" alt="Minimodes brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Babies clothing brand</p><h3>Minimodes</h3><p class="scope">Logo · Packaging · Tags · Signage</p></div></article><article class="work" data-cat="beauty" data-i="6"><button class="open" type="button" aria-label="Open Dr. Z Clinic case study"><img class="tile" src="img/brand_drz_logo.jpg" alt="Dr. Z Clinic logo tile" loading="lazy"><img class="grid" src="img/brand_drz_grid.jpg" alt="Dr. Z Clinic brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Physiotherapy clinic</p><h3>Dr. Z Clinic</h3><p class="scope">Logo · Uniforms · Stationery · Signage</p></div></article><article class="work" data-cat="beauty" data-i="7"><button class="open" type="button" aria-label="Open Kür Spa case study"><img class="tile" src="img/brand_kur_logo.jpg" alt="Kür Spa logo tile" loading="lazy"><img class="grid" src="img/brand_kur_grid.jpg" alt="Kür Spa brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Spa</p><h3>Kür Spa</h3><p class="scope">Logo · Stationery · Uniforms · Textiles</p></div></article><article class="work" data-cat="food" data-i="8"><button class="open" type="button" aria-label="Open Salmontini case study"><img class="tile" src="img/brand_salmontini_logo.jpg" alt="Salmontini logo tile" loading="lazy"><img class="grid" src="img/brand_salmontini_grid.jpg" alt="Salmontini brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Restaurant</p><h3>Salmontini</h3><p class="scope">Logo · Patterns · Packaging · Stickers</p></div></article><article class="work" data-cat="food" data-i="9"><button class="open" type="button" aria-label="Open Panem Café case study"><img class="tile" src="img/brand_panem_logo.jpg" alt="Panem Café logo tile" loading="lazy"><img class="grid" src="img/brand_panem_grid.jpg" alt="Panem Café brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Coffee shop</p><h3>Panem Café</h3><p class="scope">Logo · Illustration · Packaging · Merchandise</p></div></article><article class="work" data-cat="fashion" data-i="10"><button class="open" type="button" aria-label="Open Hala Kastoun case study"><img class="tile" src="img/brand_halakastoun_logo.jpg" alt="Hala Kastoun logo tile" loading="lazy"><img class="grid" src="img/brand_halakastoun_grid.jpg" alt="Hala Kastoun brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Clothing brand</p><h3>Hala Kastoun</h3><p class="scope">Logo · Packaging · Labels · Tags</p></div></article><article class="work" data-cat="home" data-i="11"><button class="open" type="button" aria-label="Open Meraki case study"><img class="tile" src="img/brand_meraki_logo.jpg" alt="Meraki logo tile" loading="lazy"><img class="grid" src="img/brand_meraki_grid.jpg" alt="Meraki brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Interior design company</p><h3>Meraki</h3><p class="scope">Logo · Stationery · Patterns · Colour system</p></div></article><article class="work" data-cat="fashion" data-i="12"><button class="open" type="button" aria-label="Open Laisse Tomber case study"><img class="tile" src="img/brand_laissetomber_logo.jpg" alt="Laisse Tomber logo tile" loading="lazy"><img class="grid" src="img/brand_laissetomber_grid.jpg" alt="Laisse Tomber brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Streetwear brand</p><h3>Laisse Tomber</h3><p class="scope">Logo · Apparel · Labels</p></div></article><article class="work" data-cat="food" data-i="13"><button class="open" type="button" aria-label="Open Matcha Mates case study"><img class="tile" src="img/brand_matchamates_logo.jpg" alt="Matcha Mates logo tile" loading="lazy"><img class="grid" src="img/brand_matchamates_grid.jpg" alt="Matcha Mates brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Matcha brand</p><h3>Matcha Mates</h3><p class="scope">Logo · Packaging · Menu · Signage</p></div></article><article class="work" data-cat="home" data-i="14"><button class="open" type="button" aria-label="Open Nōma case study"><img class="tile" src="img/brand_noma_logo.jpg" alt="Nōma logo tile" loading="lazy"><img class="grid" src="img/brand_noma_grid.jpg" alt="Nōma brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Interior studio</p><h3>Nōma</h3><p class="scope">Logo · Stationery · Colour system · Merchandise</p></div></article><article class="work" data-cat="fashion" data-i="15"><button class="open" type="button" aria-label="Open PUFFIK case study"><img class="tile" src="img/brand_puffik_logo.jpg" alt="PUFFIK logo tile" loading="lazy"><img class="grid" src="img/brand_puffik_grid.jpg" alt="PUFFIK brand applications" loading="lazy"><span class="hint">View project</span></button><div class="meta"><p class="eyebrow">Lifestyle brand</p><h3>PUFFIK</h3><p class="scope">Logo · Illustration · Packaging · Campaign</p></div></article></div>
   <p class="empty" id="works-empty">No brand identities in this sector yet.</p>
 </div></section>
@@ -676,6 +700,62 @@ function applyFilter() {
 }
 $$('.chip').forEach(c => c.addEventListener('click', () => { cat = c.dataset.cat; applyFilter(); }));
 
+/* branding: curved 3D carousel (concave cylinder), autoplays, drag/swipe, follows the sector filter */
+(() => {
+  const stage = $('#bstage'), ring = $('#bring'); if (!stage) return;
+  const tEl = $('#btitle'), sEl = $('#bsec'), nEl = $('#bnum');
+  let list = [], cards = [], pos = 0, target = 0, shown = -1, hover = false, inView = false, last = performance.now();
+  const pic = b => (b.gallery[0].includes('_logo') ? b.gallery[1] : b.gallery[0]) || b.gallery[0];
+  const build = () => {
+    list = DATA.brands.map((b, i) => i).filter(i => cat === 'all' || DATA.brands[i].cat === cat);
+    ring.innerHTML = list.map((bi, k) => { const w = document.querySelector(`#works .work[data-i="${bi}"]`); const imgs = w ? [...w.querySelectorAll('.open img')].map(im => `<img class="${im.className}" src="${im.getAttribute('src')}" alt="${esc(im.alt)}" decoding="async">`).join('') : `<img class="grid" src="${pic(DATA.brands[bi])}" alt="">`; return `<div class="bcard" data-k="${k}">${imgs}</div>`; }).join('');
+    cards = $$('.bcard', ring); pos = target = 0; shown = -1; frame(true);
+  };
+  const geo = () => { const w = cards[0] ? cards[0].offsetWidth : 300, R = w * 2.5, step = 2 * Math.atan(w * .555 / R) * 180 / Math.PI; return {w, R, step}; };
+  const label = k => {
+    const n = list.length; if (!n) return; const i = ((k % n) + n) % n; if (i === shown) return; shown = i;
+    const b = DATA.brands[list[i]];
+    tEl.classList.add('swap'); setTimeout(() => { tEl.textContent = b.name; tEl.classList.remove('swap'); }, reduce ? 0 : 180);
+    sEl.textContent = b.sector; nEl.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0');
+  };
+  const frame = force => {
+    const n = list.length; if (!n) return; const {R, step} = geo();
+    cards.forEach((c, k) => {
+      let d = k - pos; if (n > 2) d = ((d % n) + n + n / 2) % n - n / 2;
+      const a = d * step, ad = Math.abs(d);
+      c.style.transform = `translateZ(${R}px) rotateY(${(-a).toFixed(3)}deg) translateZ(${-R}px)`;
+      c.style.opacity = ad > 2.6 ? 0 : ad > 1.6 ? (2.6 - ad).toFixed(3) : 1;
+      c.style.zIndex = String(100 - Math.round(ad * 10));
+      c.style.setProperty('--shade', Math.min(1, ad).toFixed(2));
+      c.style.visibility = ad > 2.7 ? 'hidden' : 'visible';
+    });
+    label(Math.round(pos));
+  };
+  const go = k => { target = k; last = performance.now(); };
+  $('#bprev').addEventListener('click', () => go(Math.round(target) - 1));
+  $('#bnext').addEventListener('click', () => go(Math.round(target) + 1));
+  // drag / swipe
+  let dragX = null, dragPos = 0, moved = 0;
+  stage.addEventListener('pointerdown', e => { dragX = e.clientX; dragPos = pos; moved = 0; stage.setPointerCapture(e.pointerId); stage.classList.add('drag'); });
+  stage.addEventListener('pointermove', e => { if (dragX === null) return; const dx = e.clientX - dragX; moved = Math.max(moved, Math.abs(dx)); pos = target = dragPos - dx / (geo().w * 1.1); frame(); });
+  const end = e => { if (dragX === null) return; stage.classList.remove('drag'); dragX = null; target = Math.round(pos); last = performance.now();
+    if (moved < 6) { const c = document.elementFromPoint(e.clientX, e.clientY)?.closest('.bcard'); if (c) { const k = +c.dataset.k, n = list.length, curK = ((Math.round(pos) % n) + n) % n; if (k === curK) openBrand(list[k]); else { let d = k - curK; if (d > n / 2) d -= n; if (d < -n / 2) d += n; go(Math.round(pos) + d); } } } };
+  stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+  addEventListener('keydown', e => { if (!inView || document.querySelector('dialog[open]')) return; if (e.key === 'ArrowRight') go(Math.round(target) + 1); if (e.key === 'ArrowLeft') go(Math.round(target) - 1); });
+  $('#bcar').addEventListener('pointerenter', () => hover = true); $('#bcar').addEventListener('pointerleave', () => { hover = false; last = performance.now(); });
+  addEventListener('resize', () => frame());
+  // follow the sector filter
+  $$('.chips[data-group="works"] .chip, .chip').forEach(c => c.addEventListener('click', () => build()));
+  const tick = now => {
+    if (inView) {
+      if (!reduce && !hover && dragX === null && now - last > 2600 && Math.abs(target - pos) < .01) go(Math.round(target) + 1);
+      if (dragX === null && Math.abs(target - pos) > .0005) { pos += (target - pos) * (reduce ? 1 : .085); frame(); }
+    }
+    requestAnimationFrame(tick);
+  };
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { inView = en.isIntersecting; last = performance.now(); }), {threshold: .3}).observe(stage); else inView = true;
+  build(); requestAnimationFrame(tick);
+})();
 /* case-study and feed modals */
 const dlg = $('#dlg'), modal = $('#modal'); let cur = {type: null, i: 0, g: 0};
 const visibleBrands = () => DATA.brands.map((b, i) => i).filter(i => cat === 'all' || DATA.brands[i].cat === cat);
