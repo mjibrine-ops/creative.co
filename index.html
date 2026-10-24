@@ -149,7 +149,18 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 
 /* services */
 .services .cards{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.services .cards::before{content:"";position:absolute;z-index:-1;inset:-40px -20px;pointer-events:none;background:radial-gradient(38% 60% at 16% 40%,rgba(242,68,5,.55),transparent 70%),radial-gradient(30% 55% at 58% 72%,rgba(255,138,60,.45),transparent 70%),radial-gradient(28% 50% at 90% 28%,rgba(184,29,11,.38),transparent 70%);filter:blur(30px)}
+.services .cards.reveal{opacity:1;transform:none}
+.lights{position:absolute;z-index:-1;inset:-70px -50px;pointer-events:none}
+.lights i{position:absolute;left:0;top:0;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;filter:blur(36px);will-change:transform}
+.lights i:nth-child(1){--s:540px;background:radial-gradient(circle,rgba(242,68,5,.62) 0%,rgba(242,68,5,0) 68%)}
+.lights i:nth-child(2){--s:460px;background:radial-gradient(circle,rgba(255,138,60,.5) 0%,rgba(255,138,60,0) 68%)}
+.lights i:nth-child(3){--s:420px;background:radial-gradient(circle,rgba(184,29,11,.5) 0%,rgba(184,29,11,0) 68%)}
+.services .cards .card{opacity:0;translate:0 28px}
+.services .cards.in .card{animation:cardIn .9s cubic-bezier(.2,.7,.2,1) both}
+.services .cards.in .card:nth-child(2){animation-delay:.22s}
+.services .cards.in .card:nth-child(3){animation-delay:.44s}
+@keyframes cardIn{from{opacity:0;translate:0 28px;filter:blur(4px)}to{opacity:1;translate:0 0;filter:none}}
+@media (prefers-reduced-motion:reduce){.services .cards .card{opacity:1;translate:none}.services .cards.in .card{animation:none}}
 .card{position:relative;overflow:hidden;min-width:0;border-radius:20px;padding:32px 30px 30px;display:flex;flex-direction:column;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,.04) 55%,rgba(255,255,255,.08) 100%);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.05),0 18px 40px rgba(0,0,0,.35);transition:transform .25s,box-shadow .25s}
 .card::after{content:"";position:absolute;top:-60%;left:-80%;width:60%;height:220%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);transition:left .9s cubic-bezier(.2,.7,.2,1);pointer-events:none}
 .card:hover{transform:translateY(-4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 24px 48px rgba(0,0,0,.45)}
@@ -390,7 +401,7 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 
 <section id="services" class="band services light"><div class="wrap">
   <div class="head reveal"><div><p class="eyebrow">What we do</p><h2 class="title">Three disciplines, one creative team.</h2></div></div>
-  <div class="cards reveal"><div class="card"><p class="num">01</p><h3>Branding &amp; Identity</h3><ul><li>Logo design</li><li>Brand identity &amp; guidelines</li><li>Packaging design</li><li>Brochures &amp; business cards</li><li>Posters &amp; flyers</li></ul><a class="more" href="#branding">See brand identities <span aria-hidden="true">→</span></a></div><div class="card"><p class="num">02</p><h3>Content &amp; Production</h3><ul><li>Photography</li><li>Videography</li><li>Reels &amp; video editing</li><li>AI-powered ads &amp; reels</li><li>Art direction on set</li></ul><a class="more" href="#ai">See AI-powered ads <span aria-hidden="true">→</span></a></div><div class="card"><p class="num">03</p><h3>Digital &amp; Social</h3><ul><li>Social media management</li><li>Content creation &amp; posting schedule</li><li>Instagram post &amp; reel design</li><li>Web design &amp; UX/UI</li><li>Presentation design</li></ul><a class="more" href="#social">See social media feeds <span aria-hidden="true">→</span></a></div></div>
+  <div class="cards reveal"><div class="card"><p class="num">01</p><h3>Branding &amp; Identity</h3><ul><li>Logo design</li><li>Brand identity &amp; guidelines</li><li>Packaging design</li><li>Brochures &amp; business cards</li><li>Posters &amp; flyers</li></ul><a class="more" href="#branding">See brand identities <span aria-hidden="true">→</span></a></div><div class="card"><p class="num">02</p><h3>Content &amp; Production</h3><ul><li>Photography</li><li>Videography</li><li>Reels &amp; video editing</li><li>AI-powered ads &amp; reels</li><li>Art direction on set</li></ul><a class="more" href="#ai">See AI-powered ads <span aria-hidden="true">→</span></a></div><div class="card"><p class="num">03</p><h3>Digital &amp; Social</h3><ul><li>Social media management</li><li>Content creation &amp; posting schedule</li><li>Instagram post &amp; reel design</li><li>Web design &amp; UX/UI</li><li>Presentation design</li></ul><a class="more" href="#social">See social media feeds <span aria-hidden="true">→</span></a></div><div class="lights" id="svcLights" aria-hidden="true"><i></i><i></i><i></i></div></div>
 </div></section>
 
 <section id="logofolio" class="band light" style="padding-top:0"><div class="wrap">
@@ -501,6 +512,29 @@ const hero = $('#hero');
 /* open at the top of the page */
 const toTop = () => window.scrollTo({top: 0, left: 0, behavior: 'instant'});
 toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if (e.persisted) toTop(); });
+/* services: lights behind the glass cards follow the cursor */
+(() => {
+  const box = $('#svcLights'), sec = $('#services'); if (!box || !sec) return;
+  const L = $$('i', box), rest = [[.18, .45], [.55, .78], [.86, .3]], k = [.8, .5, .32];
+  const P = rest.map(() => [0, 0]); let cx = null, cy = null, run = false, init = false;
+  const size = () => [box.clientWidth, box.clientHeight];
+  sec.addEventListener('pointermove', e => { const r = box.getBoundingClientRect(); cx = e.clientX - r.left; cy = e.clientY - r.top; }, {passive: true});
+  sec.addEventListener('pointerleave', () => { cx = cy = null; });
+  const tick = () => {
+    if (!run) return; const [w, h] = size(), t = performance.now() / 1000;
+    L.forEach((el, i) => {
+      let tx = rest[i][0] * w + Math.sin(t * .4 + i * 2) * 26, ty = rest[i][1] * h + Math.cos(t * .5 + i) * 20;
+      if (cx !== null) { tx += (cx - tx) * k[i]; ty += (cy - ty) * k[i]; }
+      if (!init) P[i] = [tx, ty];
+      P[i][0] += (tx - P[i][0]) * .07; P[i][1] += (ty - P[i][1]) * .07;
+      el.style.transform = `translate3d(${P[i][0].toFixed(1)}px, ${P[i][1].toFixed(1)}px, 0)`;
+    });
+    init = true; requestAnimationFrame(tick);
+  };
+  const start = () => { if (!run) { run = true; requestAnimationFrame(tick); } };
+  if (reduce) { run = true; tick(); run = false; return; }
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) start(); else run = false; })).observe(sec); else start();
+})();
 /* hero headline: smooth typing */
 (() => {
   const h = $('#typeH'); if (!h || reduce) return;
