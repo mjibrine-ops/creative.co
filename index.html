@@ -96,7 +96,7 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 .hero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
 /* robot visual: eyes follow the cursor */
 .bot{position:absolute;z-index:1;top:0;bottom:0;right:0;width:68%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 26%);mask-image:linear-gradient(90deg,transparent 0,#000 26%)}
-.bot canvas{display:block;width:100%;height:100%;background:#141414 url(img/robot_seq/r20.jpg) center/cover no-repeat}
+.bot canvas{display:block;width:100%;height:100%;background:#141414 url(img/robot_seq/base.jpg) center/cover no-repeat}
 .bfly{position:absolute;left:0;top:0;z-index:3;width:84px;height:56px;margin:-28px 0 0 -42px;pointer-events:none;will-change:transform;filter:hue-rotate(-14deg) saturate(1.25);opacity:0;transition:opacity .6s}
 .bfly.on{opacity:1}
 .bfly i{display:block;width:100%;height:100%;background:url(img/butterfly.webp) 0 0/900% 100% no-repeat}
@@ -569,45 +569,73 @@ toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if
   };
   requestAnimationFrame(step);
 })();
-/* hero robot: head and eyes turn toward the cursor (scrubs a 40-frame head-turn clip) */
+/* hero robot: head turns toward the cursor (50-frame clip, no blending); live irises follow the butterfly */
 (() => {
   const cv = $('#botCv'); if (!cv) return;
   const ctx = cv.getContext('2d');
-  const N = 31, MID = 20, W = 1600, H = 900, HEAD_X = .484;   // frame 0 = looking left, 20 = centre, 30 = looking right
-  const imgs = new Array(N); let loaded = 0;
-  const load = i => new Promise(res => { const im = new Image(); im.decoding = 'async'; im.onload = () => { imgs[i] = im; loaded++; res(); }; im.onerror = res; im.src = `img/robot_seq/r${String(i).padStart(2, '0')}.jpg`; });
+  const SEQ = {"n":50,"mid":30,"crop":[590,20,390,430],"eyes":[[686.5,201.4,752.8,205.0],[684.3,201.5,750.1,204.5],[682.6,202.1,748.5,205.1],[680.6,203.1,746.3,205.6],[679.4,205.1,744.3,207.3],[677.9,207.5,742.9,209.8],[676.3,211.8,742.2,213.3],[674.9,215.8,741.0,217.3],[674.4,221.2,741.2,221.8],[674.7,227.3,741.2,227.7],[676.9,236.5,743.7,236.1],[679.4,239.3,746.2,239.1],[682.4,240.6,749.5,240.3],[684.7,240.4,752.1,240.0],[687.5,239.2,755.8,239.0],[690.8,237.1,758.6,237.3],[694.5,234.6,763.1,234.8],[699.1,231.0,767.5,231.6],[703.6,227.9,772.9,228.2],[708.7,224.9,778.3,225.5],[714.2,221.9,784.7,222.8],[719.5,219.8,789.9,220.8],[725.3,218.9,796.5,219.6],[730.7,218.3,801.9,219.4],[735.2,218.8,807.4,219.9],[740.8,217.4,811.7,218.0],[742.1,216.3,813.8,217.1],[742.2,216.4,813.9,217.1],[742.1,216.6,813.8,217.1],[742.1,216.6,814.0,217.1],[742.1,216.5,814.2,217.1],[747.2,214.6,817.6,215.7],[749.6,213.7,820.3,215.0],[753.1,212.9,823.0,214.2],[755.3,212.3,825.7,213.1],[759.3,211.2,828.9,212.2],[762.6,209.9,831.7,211.3],[766.7,209.0,835.9,210.3],[770.0,208.2,838.5,209.2],[774.2,207.7,842.2,208.4],[779.2,207.0,845.9,207.4],[784.2,206.2,851.1,207.2],[787.4,206.0,853.9,206.8],[791.3,206.1,857.4,207.1],[794.1,206.5,859.4,207.3],[796.3,207.2,861.0,208.4],[797.4,207.9,862.7,208.8],[799.2,209.1,863.8,210.4],[801.3,211.0,865.5,211.7],[802.5,213.0,866.9,213.9]]}, N = SEQ.n, MID = SEQ.mid, W = 1600, H = 900, HEAD_X = .484, [CX, CY, CW, CH] = SEQ.crop;
+  const base = new Image(), heads = new Array(N);
+  const load = i => new Promise(res => { const im = new Image(); im.decoding = 'async'; im.onload = () => { heads[i] = im; res(); }; im.onerror = res; im.src = `img/robot_seq/h${String(i).padStart(2, '0')}.webp`; });
   let cw = 0, ch = 0, dpr = 1;
   const fit = () => { dpr = Math.min(2, devicePixelRatio || 1); cw = cv.clientWidth; ch = cv.clientHeight; cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); };
   const cover = () => { const s = Math.max(cw / W, ch / H); return {s, ox: (cw - W * s) / 2, oy: (ch - H * s) / 2}; };
-  const nearest = i => { for (let d = 0; d < N; d++) { if (imgs[i + d]) return imgs[i + d]; if (imgs[i - d]) return imgs[i - d]; } return null; };
+  const near = i => { for (let d = 0; d < N; d++) { if (heads[i + d]) return [heads[i + d], i + d]; if (heads[i - d]) return [heads[i - d], i - d]; } return [null, i]; };
+  let gx = 0, gy = 0;                                   // current iris offset (frame px)
+  const eye = (x, y, k) => {
+    const rx = 13.5 * k, ry = 5.4;
+    ctx.save(); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+    let g = ctx.createRadialGradient(x, y - 1, 1, x, y, rx * 1.1); g.addColorStop(0, '#A48C82'); g.addColorStop(.6, '#6E5246'); g.addColorStop(1, '#2E1A12');
+    ctx.fillStyle = g; ctx.fillRect(x - rx, y - ry, rx * 2, ry * 2);
+    const ix = x + gx * k, iy = y + gy;
+    g = ctx.createRadialGradient(ix, iy, 0, ix, iy, 7.4); g.addColorStop(0, '#FFE6A0'); g.addColorStop(.38, '#FFA21F'); g.addColorStop(.75, '#F24405'); g.addColorStop(1, '#4A0E00');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ix, iy, 7.4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#150604'; ctx.beginPath(); ctx.arc(ix, iy, 2.9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,246,232,.85)'; ctx.beginPath(); ctx.arc(ix - 2.2, iy - 2.2, 1.1, 0, Math.PI * 2); ctx.fill();
+    g = ctx.createLinearGradient(0, y - ry, 0, y + ry); g.addColorStop(0, 'rgba(26,11,5,.75)'); g.addColorStop(.45, 'rgba(26,11,5,0)'); g.addColorStop(1, 'rgba(26,11,5,.3)');
+    ctx.fillStyle = g; ctx.fillRect(x - rx, y - ry, rx * 2, ry * 2);
+    ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(3px)'; ctx.globalAlpha = .5;
+    ctx.fillStyle = '#FF7A1A'; ctx.beginPath(); ctx.arc(ix, iy, 6, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  };
+  let shown = -1;
   const paint = f => {
-    const {s, ox, oy} = cover(), i = Math.floor(f), fr = f - i, a = nearest(i), b = imgs[Math.min(N - 1, i + 1)];
-    if (!a) return; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(a, ox, oy, W * s, H * s);
-    if (b && fr > .02) { ctx.globalAlpha = fr; ctx.drawImage(b, ox, oy, W * s, H * s); ctx.globalAlpha = 1; }
+    if (!base.complete || !base.naturalWidth) return;
+    const {s, ox, oy} = cover(), [im, i] = near(Math.round(f)); if (!im) return; shown = i;
+    ctx.setTransform(dpr * s, 0, 0, dpr * s, dpr * ox, dpr * oy);
+    ctx.drawImage(base, 0, 0, W, H); ctx.drawImage(im, CX, CY, CW, CH);
+    const [lx, ly, rx, ry] = SEQ.eyes[i], k = Math.max(.78, Math.min(1.05, (rx - lx) / 72));
+    eye(lx, ly, k); eye(rx, ry, k);
   };
-  let target = MID, cur = MID, last = 0;
-  const aim = (x, idle) => {
-    const r = cv.getBoundingClientRect(), {s, ox} = cover(); const hx = r.left + ox + HEAD_X * W * s;
-    const n = Math.max(-1, Math.min(1, (x - hx) / Math.max(320, innerWidth * .38)));
-    const e = Math.sign(n) * Math.pow(Math.abs(n), .85);
-    target = e < 0 ? MID + e * MID : MID + e * (N - 1 - MID); if (!idle) last = performance.now();
-  };
-  addEventListener('pointermove', e => aim(e.clientX), {passive: true});
-  addEventListener('pointerdown', e => aim(e.clientX), {passive: true});
-  addEventListener('resize', () => { fit(); paint(cur); });
+  // head target from the cursor; gaze target from the butterfly
+  let target = MID, cur = MID, last = 0, mx = null, my = null;
+  const headX = () => { const r = cv.getBoundingClientRect(), {s, ox} = cover(); return r.left + ox + HEAD_X * W * s; };
+  const aim = x => { const n = Math.max(-1, Math.min(1, (x - headX()) / Math.max(320, innerWidth * .38))), e = Math.sign(n) * Math.pow(Math.abs(n), .85); target = e < 0 ? MID + e * MID : MID + e * (N - 1 - MID); };
+  addEventListener('pointermove', e => { aim(e.clientX); mx = e.clientX; my = e.clientY; last = performance.now(); }, {passive: true});
+  addEventListener('pointerdown', e => { aim(e.clientX); mx = e.clientX; my = e.clientY; last = performance.now(); }, {passive: true});
+  addEventListener('resize', () => { fit(); shown = -1; });
   fit();
-  load(MID).then(() => { paint(MID); if (reduce) return; return Promise.all([...Array(N).keys()].filter(i => i !== MID).map(load)); });
+  base.onload = () => load(MID).then(() => { paint(MID); if (!reduce) for (let i = 0; i < N; i++) if (i !== MID) load(i); });
+  base.src = 'img/robot_seq/base.jpg';
   if (reduce) return;
   let running = true;
   const tick = () => {
     if (!running) return;
-    const now = performance.now();
-    if (now - last > 3500) { const bp = window.__bfly; if (bp && bp.on) aim(bp.x, 1); else target = MID + Math.sin(now / 1400) * 8; }
-    cur += (target - cur) * .12;
-    if (Math.abs(target - cur) > .002 || !tick.drawn) { paint(Math.max(0, Math.min(N - 1, cur))); tick.drawn = Math.abs(target - cur) <= .002; }
+    const now = performance.now(), bp = window.__bfly;
+    if (now - last > 3500) { if (bp && bp.on) aim(bp.x); else target = MID + Math.sin(now / 1400) * 10; }
+    cur += (target - cur) * .14;
+    // eyes: look at the butterfly (fallback: the cursor)
+    const tx = bp && bp.on ? bp.x : mx, ty = bp && bp.on ? bp.y : my;
+    let ex = 0, ey = 0;
+    if (tx != null && base.naturalWidth && shown >= 0) {
+      const r = cv.getBoundingClientRect(), {s, ox, oy} = cover(), [lx, ly, rx, ry] = SEQ.eyes[shown];
+      const sx = r.left + ox + (lx + rx) / 2 * s, sy = r.top + oy + (ly + ry) / 2 * s, dx = tx - sx, dy = ty - sy, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 240);
+      ex = dx / d * 5.2 * k; ey = Math.max(-2.2, Math.min(2.2, dy / d * 3 * k));
+    }
+    gx += (ex - gx) * .18; gy += (ey - gy) * .18;
+    paint(Math.max(0, Math.min(N - 1, cur)));
     requestAnimationFrame(tick);
   };
-  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { running = en.isIntersecting; if (running) { tick.drawn = false; requestAnimationFrame(tick); } })).observe(cv);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { running = en.isIntersecting; if (running) requestAnimationFrame(tick); })).observe(cv);
   else requestAnimationFrame(tick);
 })();
 (() => {
