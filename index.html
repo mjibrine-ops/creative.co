@@ -149,6 +149,18 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 /* services */
 .services .cards{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .services{overflow:hidden;overflow:clip}
+/* what we do: human and robot hands reach for each other in 3D as you scroll */
+.services .head{position:relative;z-index:2}
+.touch{position:relative;margin:clamp(-8px,-1vw,0px) calc(50% - 50vw) clamp(8px,2vw,28px);perspective:1100px;perspective-origin:50% 40%;pointer-events:none;--p:0}
+.touch .tstage{position:relative;width:100%;aspect-ratio:1672/470;transform-style:preserve-3d;transform:rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg));transition:transform .4s ease-out}
+.touch .hand{position:absolute;display:block;height:auto;max-width:none;will-change:transform,opacity;backface-visibility:hidden}
+.touch .human{left:0;top:5.3%;width:43.8%;transform-origin:0% 50%;transform:translate3d(calc((1 - var(--p)) * -46vw),calc((1 - var(--p)) * 60px),calc((1 - var(--p)) * -420px)) rotateY(calc((1 - var(--p)) * 38deg)) rotateZ(calc((1 - var(--p)) * -7deg));opacity:calc(.15 + var(--p) * .85)}
+.touch .robot{left:46.2%;top:6.6%;width:53.8%;transform-origin:100% 50%;transform:translate3d(calc((1 - var(--p)) * 46vw),calc((1 - var(--p)) * 60px),calc((1 - var(--p)) * -420px)) rotateY(calc((1 - var(--p)) * -38deg)) rotateZ(calc((1 - var(--p)) * 7deg));opacity:calc(.15 + var(--p) * .85)}
+.touch .spark{position:absolute;left:45.3%;top:20%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%) scale(calc(.4 + var(--p) * .6));border-radius:50%;background:radial-gradient(circle,rgba(255,170,60,.55) 0%,rgba(242,68,5,.32) 22%,rgba(242,68,5,.1) 45%,rgba(242,68,5,0) 68%);opacity:calc(var(--p) * var(--p) * var(--p));filter:blur(6px)}
+.touch .core{position:absolute;left:45.3%;top:18%;width:3.2%;aspect-ratio:1;transform:translate(-50%,-50%) translateZ(40px);border-radius:50%;background:radial-gradient(circle,#FFF4DC 0%,rgba(255,190,90,.9) 30%,rgba(242,68,5,0) 70%);opacity:0}
+.touch.lit .core{animation:touchPulse 2.4s ease-in-out infinite}
+@keyframes touchPulse{0%,100%{opacity:.55;transform:translate(-50%,-50%) translateZ(40px) scale(.8)}50%{opacity:1;transform:translate(-50%,-50%) translateZ(40px) scale(1.25)}}
+@media (prefers-reduced-motion:reduce){.touch{--p:1}.touch .tstage{transition:none}.touch.lit .core{animation:none;opacity:.8}}
 .services .cards.reveal{opacity:1;transform:none}
 .lights{position:absolute;z-index:-1;inset:-70px -50px;pointer-events:none}
 .lights i{position:absolute;left:0;top:0;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;filter:blur(48px);will-change:transform}
@@ -383,6 +395,7 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 
 <section id="services" class="band services light"><div class="wrap">
   <div class="head reveal"><div><p class="eyebrow">What we do</p><h2 class="title">Three disciplines, one creative team.</h2></div></div>
+  <div class="touch" id="touch" aria-hidden="true"><div class="tstage" id="touchStage"><span class="spark"></span><img class="hand human" src="img/hand_human.webp" alt="" width="732" height="335" loading="lazy" decoding="async"><img class="hand robot" src="img/hand_robot.webp" alt="" width="900" height="448" loading="lazy" decoding="async"><span class="core"></span></div></div>
   <div class="cards reveal"><div class="card"><p class="num">01</p><h3>Branding &amp; Identity</h3><ul><li>Logo design</li><li>Brand identity &amp; guidelines</li><li>Packaging design</li><li>Brochures &amp; business cards</li><li>Posters &amp; flyers</li></ul><a class="more" href="#branding">See brand identities <span aria-hidden="true">→</span></a></div><div class="card"><p class="num">02</p><h3>Content &amp; Production</h3><ul><li>Photography</li><li>Videography</li><li>Reels &amp; video editing</li><li>AI-powered ads &amp; reels</li><li>Art direction on set</li></ul><a class="more" href="#ai">See AI-powered ads <span aria-hidden="true">→</span></a></div><div class="card"><p class="num">03</p><h3>Digital &amp; Social</h3><ul><li>Social media management</li><li>Content creation &amp; posting schedule</li><li>Instagram post &amp; reel design</li><li>Web design &amp; UX/UI</li><li>Presentation design</li></ul><a class="more" href="#social">See social media feeds <span aria-hidden="true">→</span></a></div><div class="lights" id="svcLights" aria-hidden="true"><i></i><i></i><i></i></div></div>
 </div></section>
 
@@ -494,6 +507,19 @@ const hero = $('#hero');
 /* open at the top of the page */
 const toTop = () => window.scrollTo({top: 0, left: 0, behavior: 'instant'});
 toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if (e.persisted) toTop(); });
+/* what we do: hands come together as the section scrolls in; slight 3D tilt with the cursor */
+(() => {
+  const el = $('#touch'), stage = $('#touchStage'); if (!el) return;
+  if (reduce) { el.classList.add('lit'); return; }
+  let p = -1, want = 0, raf = 0;
+  const read = () => { const r = el.getBoundingClientRect(), vh = innerHeight; const start = vh * 1.0, end = vh * .42; want = Math.max(0, Math.min(1, (start - (r.top + r.height / 2)) / (start - end))); };
+  const step = () => { raf = 0; const e = 1 - Math.pow(1 - want, 3); if (Math.abs(e - p) > .001) { p = e; el.style.setProperty('--p', p.toFixed(4)); el.classList.toggle('lit', p > .97); } };
+  const on = () => { read(); if (!raf) raf = requestAnimationFrame(step); };
+  addEventListener('scroll', on, {passive: true}); addEventListener('resize', on); on();
+  const sec = $('#services');
+  sec.addEventListener('pointermove', e => { const r = stage.getBoundingClientRect(); const nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5; stage.style.setProperty('--ty', (nx * 6).toFixed(2) + 'deg'); stage.style.setProperty('--tx', (-ny * 5).toFixed(2) + 'deg'); }, {passive: true});
+  sec.addEventListener('pointerleave', () => { stage.style.setProperty('--ty', '0deg'); stage.style.setProperty('--tx', '0deg'); });
+})();
 /* services: lights behind the glass cards follow the cursor */
 (() => {
   const box = $('#svcLights'), sec = $('#services'); if (!box || !sec) return;
