@@ -96,13 +96,12 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 .hero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
 /* robot visual: eyes follow the cursor */
 .bot{position:absolute;z-index:1;top:0;bottom:0;right:0;width:68%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 26%);mask-image:linear-gradient(90deg,transparent 0,#000 26%)}
-.bot svg{display:block;width:100%;height:100%}
+.bot canvas{display:block;width:100%;height:100%;background:#141414 url(img/robot_seq/r20.jpg) center/cover no-repeat}
 .bfly{position:absolute;left:0;top:0;z-index:3;width:84px;height:56px;margin:-28px 0 0 -42px;pointer-events:none;will-change:transform;filter:hue-rotate(-14deg) saturate(1.25);opacity:0;transition:opacity .6s}
 .bfly.on{opacity:1}
 .bfly i{display:block;width:100%;height:100%;background:url(img/butterfly.webp) 0 0/900% 100% no-repeat}
 @media (max-width:860px){.bfly{width:64px;height:43px;margin:-21px 0 0 -32px}}
 @media (prefers-reduced-motion:reduce){.bfly{display:none}}
-.bot .eye-glow{filter:url(#eyeBlur);opacity:.55;mix-blend-mode:screen}
 .hero .scroll{position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);width:26px;height:42px;border:1.5px solid rgba(253,253,252,.35);border-radius:14px;display:none}
 .hero .scroll::after{content:"";position:absolute;left:50%;top:8px;width:3px;height:8px;margin-left:-1.5px;border-radius:2px;background:var(--orange);animation:cue 1.8s ease-in-out infinite}
 @keyframes cue{0%{opacity:0;transform:translateY(-2px)}40%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
@@ -149,6 +148,7 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 
 /* services */
 .services .cards{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.services{overflow:hidden;overflow:clip}
 .services .cards.reveal{opacity:1;transform:none}
 .lights{position:absolute;z-index:-1;inset:-70px -50px;pointer-events:none}
 .lights i{position:absolute;left:0;top:0;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;filter:blur(48px);will-change:transform}
@@ -345,22 +345,7 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 
 <main id="top">
 <section class="hero dark" id="hero"><div class="glow"></div>
-<div class="bot" aria-hidden="true"><svg id="botSvg" viewBox="0 0 1671 941" preserveAspectRatio="xMidYMid slice">
-<defs>
-<radialGradient id="sclera" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#A99086"/><stop offset=".55" stop-color="#7E6153"/><stop offset="1" stop-color="#3E2519"/></radialGradient>
-<radialGradient id="irisG"><stop offset="0" stop-color="#FFE08A"/><stop offset=".42" stop-color="#FF9A1F"/><stop offset=".78" stop-color="#F24405"/><stop offset="1" stop-color="#4A0E00"/></radialGradient>
-<linearGradient id="lidShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A0B05" stop-opacity=".75"/><stop offset=".45" stop-color="#1A0B05" stop-opacity="0"/><stop offset="1" stop-color="#1A0B05" stop-opacity=".35"/></linearGradient>
-<filter id="eyeBlur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2"/></filter>
-<clipPath id="lidL"><ellipse id="lidEL" cx="792" cy="232.6" rx="16.5" ry="5.8"/></clipPath>
-<clipPath id="lidR"><ellipse id="lidER" cx="865.5" cy="233.4" rx="17.5" ry="5.8"/></clipPath>
-<g id="irisShape"><circle r="6.4" fill="url(#irisG)"/><circle r="6.4" fill="none" stroke="#2A0800" stroke-width=".8" opacity=".7"/><circle r="2.5" fill="#160603"/><circle cx="-1.9" cy="-1.9" r=".95" fill="#FFF6E8" opacity=".85"/></g>
-</defs>
-<image href="img/hero_robot.jpg" width="1671" height="941"/>
-<g clip-path="url(#lidL)"><ellipse cx="792" cy="232.6" rx="17" ry="6.5" fill="url(#sclera)"/><use class="iris" data-cx="790" data-cy="232.6" href="#irisShape" x="790" y="232.6"/><ellipse cx="792" cy="232.6" rx="17" ry="6.5" fill="url(#lidShade)"/></g>
-<g clip-path="url(#lidR)"><ellipse cx="865.5" cy="233.4" rx="18" ry="6.5" fill="url(#sclera)"/><use class="iris" data-cx="865" data-cy="233.6" href="#irisShape" x="865" y="233.6"/><ellipse cx="865.5" cy="233.4" rx="18" ry="6.5" fill="url(#lidShade)"/></g>
-<circle class="eye-glow" data-cx="790" data-cy="232.6" cx="790" cy="232.6" r="6" fill="#FF7A1A"/>
-<circle class="eye-glow" data-cx="865" data-cy="233.6" cx="865" cy="233.6" r="6" fill="#FF7A1A"/>
-</svg></div>
+<div class="bot" aria-hidden="true"><canvas id="botCv"></canvas></div>
 <div class="wrap"><div class="copy">
     <p class="eyebrow">International creative agency · Beirut · Dubai</p>
     <h1 id="typeH" aria-label="Creative Agency"><span class="w">Creative</span><br><span class="w"><em>Agency</em></span></h1>
@@ -584,37 +569,46 @@ toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if
   };
   requestAnimationFrame(step);
 })();
-/* hero robot: eyes follow the cursor, occasional blink */
+/* hero robot: head and eyes turn toward the cursor (scrubs a 40-frame head-turn clip) */
 (() => {
-  const svg = $('#botSvg'); if (!svg) return;
-  const parts = $$('.iris, .eye-glow', svg);
-  const MX = 7.5, MY = 2.6;
-  let tx = 0, ty = 0, x = 0, y = 0, last = 0;
-  const aim = (cx, cy, idle) => {
-    const m = svg.getScreenCTM(); if (!m) return;
-    const ex = 828 * m.a + m.e, ey = 233 * m.d + m.f;
-    const dx = cx - ex, dy = cy - ey, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260);
-    tx = dx / d * MX * k; ty = dy / d * MY * k * 1.6; ty = Math.max(-MY, Math.min(MY, ty)); if (!idle) last = performance.now();
+  const cv = $('#botCv'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const N = 31, MID = 20, W = 1600, H = 900, HEAD_X = .484;   // frame 0 = looking left, 20 = centre, 30 = looking right
+  const imgs = new Array(N); let loaded = 0;
+  const load = i => new Promise(res => { const im = new Image(); im.decoding = 'async'; im.onload = () => { imgs[i] = im; loaded++; res(); }; im.onerror = res; im.src = `img/robot_seq/r${String(i).padStart(2, '0')}.jpg`; });
+  let cw = 0, ch = 0, dpr = 1;
+  const fit = () => { dpr = Math.min(2, devicePixelRatio || 1); cw = cv.clientWidth; ch = cv.clientHeight; cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); };
+  const cover = () => { const s = Math.max(cw / W, ch / H); return {s, ox: (cw - W * s) / 2, oy: (ch - H * s) / 2}; };
+  const nearest = i => { for (let d = 0; d < N; d++) { if (imgs[i + d]) return imgs[i + d]; if (imgs[i - d]) return imgs[i - d]; } return null; };
+  const paint = f => {
+    const {s, ox, oy} = cover(), i = Math.floor(f), fr = f - i, a = nearest(i), b = imgs[Math.min(N - 1, i + 1)];
+    if (!a) return; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(a, ox, oy, W * s, H * s);
+    if (b && fr > .02) { ctx.globalAlpha = fr; ctx.drawImage(b, ox, oy, W * s, H * s); ctx.globalAlpha = 1; }
   };
-  addEventListener('pointermove', e => aim(e.clientX, e.clientY), {passive: true});
-  addEventListener('pointerdown', e => aim(e.clientX, e.clientY), {passive: true});
-  const draw = () => {
-    const bp = window.__bfly; if (performance.now() - last > 3500 && bp && bp.on) aim(bp.x, bp.y, 1);
-    else if (performance.now() - last > 3500) { const t = performance.now() / 1000; tx = Math.sin(t * .7) * MX * .55; ty = Math.sin(t * 1.1) * MY * .4; }
-    x += (tx - x) * .14; y += (ty - y) * .14;
-    parts.forEach(p => { const cx = +p.dataset.cx + x, cy = +p.dataset.cy + y; if (p.tagName === 'use') { p.setAttribute('x', cx); p.setAttribute('y', cy); } else { p.setAttribute('cx', cx); p.setAttribute('cy', cy); } });
-    requestAnimationFrame(draw);
+  let target = MID, cur = MID, last = 0;
+  const aim = (x, idle) => {
+    const r = cv.getBoundingClientRect(), {s, ox} = cover(); const hx = r.left + ox + HEAD_X * W * s;
+    const n = Math.max(-1, Math.min(1, (x - hx) / Math.max(320, innerWidth * .38)));
+    const e = Math.sign(n) * Math.pow(Math.abs(n), .85);
+    target = e < 0 ? MID + e * MID : MID + e * (N - 1 - MID); if (!idle) last = performance.now();
   };
-  if (!reduce) {
-    requestAnimationFrame(draw);
-    const lids = [$('#lidEL'), $('#lidER')], glows = $$('.eye-glow', svg);
-    const blink = () => {
-      lids.forEach(l => l.setAttribute('ry', '0.4')); glows.forEach(g => g.style.opacity = '0');
-      setTimeout(() => { lids.forEach(l => l.setAttribute('ry', '5.8')); glows.forEach(g => g.style.opacity = ''); }, 130);
-      setTimeout(blink, 3200 + Math.random() * 3800);
-    };
-    setTimeout(blink, 2500);
-  }
+  addEventListener('pointermove', e => aim(e.clientX), {passive: true});
+  addEventListener('pointerdown', e => aim(e.clientX), {passive: true});
+  addEventListener('resize', () => { fit(); paint(cur); });
+  fit();
+  load(MID).then(() => { paint(MID); if (reduce) return; return Promise.all([...Array(N).keys()].filter(i => i !== MID).map(load)); });
+  if (reduce) return;
+  let running = true;
+  const tick = () => {
+    if (!running) return;
+    const now = performance.now();
+    if (now - last > 3500) { const bp = window.__bfly; if (bp && bp.on) aim(bp.x, 1); else target = MID + Math.sin(now / 1400) * 8; }
+    cur += (target - cur) * .12;
+    if (Math.abs(target - cur) > .002 || !tick.drawn) { paint(Math.max(0, Math.min(N - 1, cur))); tick.drawn = Math.abs(target - cur) <= .002; }
+    requestAnimationFrame(tick);
+  };
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { running = en.isIntersecting; if (running) { tick.drawn = false; requestAnimationFrame(tick); } })).observe(cv);
+  else requestAnimationFrame(tick);
 })();
 (() => {
   const words = $$('#rot span'); let w = 0;
