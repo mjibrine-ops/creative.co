@@ -89,6 +89,11 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 /* robot visual: eyes follow the cursor */
 .bot{position:absolute;z-index:1;top:0;bottom:0;right:0;width:68%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 26%);mask-image:linear-gradient(90deg,transparent 0,#000 26%)}
 .bot svg{display:block;width:100%;height:100%}
+.bfly{position:absolute;left:0;top:0;z-index:3;width:104px;height:102px;margin:-51px 0 0 -52px;pointer-events:none;will-change:transform;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));opacity:0;transition:opacity .6s}
+.bfly.on{opacity:1}
+.bfly i{display:block;width:100%;height:100%;background:url(img/butterfly.webp) 0 0/1000% 100% no-repeat}
+@media (max-width:860px){.bfly{width:64px;height:62px;margin:-31px 0 0 -32px}}
+@media (prefers-reduced-motion:reduce){.bfly{display:none}}
 .bot .eye-glow{filter:url(#eyeBlur);opacity:.55;mix-blend-mode:screen}
 .hero .scroll{position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);width:26px;height:42px;border:1.5px solid rgba(253,253,252,.35);border-radius:14px;display:none}
 .hero .scroll::after{content:"";position:absolute;left:50%;top:8px;width:3px;height:8px;margin-left:-1.5px;border-radius:2px;background:var(--orange);animation:cue 1.8s ease-in-out infinite}
@@ -349,6 +354,7 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
     <div class="actions"><a class="cta" href="#branding">See the work</a><a class="cta ghost" href="#contact">Start a project</a></div>
 </div></div>
 <a class="scroll" href="#about" aria-label="Scroll down"></a>
+<div class="bfly" id="bfly" aria-hidden="true"><i></i></div>
 </section>
 
 <section class="marquee dark" aria-label="Brands we have worked with"><p class="label">Brands we have worked with · hover to pause · click a logo to open its project</p><div class="track" id="track"></div></section>
@@ -495,22 +501,53 @@ setTimeout(() => $$('.reveal').forEach(el => el.classList.add('in')), 4000);
 /* hero glow follows the cursor */
 const hero = $('#hero');
 
+/* hero butterfly: follows the cursor inside the hero, wanders when idle */
+(() => {
+  const el = $('#bfly'), spr = el && el.firstElementChild; if (!el || reduce) return;
+  const FR = 10; let x = 0, y = 0, tx = 0, ty = 0, vx = 0, vy = 0, f = 0, inside = false, lastMove = 0, t0 = performance.now(), init = false;
+  const home = () => { const w = hero.clientWidth, h = hero.clientHeight, small = w < 861; return [w * (small ? .72 : .62), h * (small ? .14 : .22)]; };
+  hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); tx = e.clientX - r.left + 34; ty = e.clientY - r.top - 30; inside = true; lastMove = performance.now(); }, {passive: true});
+  hero.addEventListener('pointerdown', e => { const r = hero.getBoundingClientRect(); tx = e.clientX - r.left + 34; ty = e.clientY - r.top - 30; inside = true; lastMove = performance.now(); }, {passive: true});
+  hero.addEventListener('pointerleave', () => { inside = false; });
+  let prev = performance.now();
+  const step = now => {
+    const dt = Math.min(50, now - prev) / 16.67; prev = now; const t = (now - t0) / 1000;
+    const w = hero.clientWidth, h = hero.clientHeight;
+    if (!init) { [x, y] = home(); tx = x; ty = y; init = true; el.classList.add('on'); }
+    let gx = tx, gy = ty;
+    if (!inside || now - lastMove > 2500) { const [hx, hy] = home(); gx = hx + Math.sin(t * .55) * Math.min(160, w * .2) + Math.sin(t * 1.7) * 18; gy = hy + Math.sin(t * .9) * 50 + Math.cos(t * 2.3) * 10; }
+    else { gx += Math.sin(t * 2.1) * 10; gy += Math.cos(t * 2.7) * 8; }
+    gx = Math.max(40, Math.min(w - 40, gx)); gy = Math.max(40, Math.min(h - 40, gy));
+    const ax = (gx - x) * .0035, ay = (gy - y) * .0035;
+    vx = (vx + ax * dt * 16) * Math.pow(.86, dt); vy = (vy + ay * dt * 16) * Math.pow(.86, dt);
+    x += vx * dt; y += vy * dt;
+    const sp = Math.hypot(vx, vy);
+    f = (f + dt * (.42 + Math.min(.5, sp * .06))) % FR;
+    spr.style.backgroundPosition = `${Math.floor(f) * 100 / (FR - 1)}% 0`;
+    const tilt = Math.max(-28, Math.min(28, vx * 3.2)), bob = Math.sin(t * 7) * 2;
+    el.style.transform = `translate(${x.toFixed(1)}px, ${(y + bob).toFixed(1)}px) rotate(${tilt.toFixed(1)}deg)`;
+    const r = hero.getBoundingClientRect(); window.__bfly = {x: r.left + x, y: r.top + y, on: r.bottom > 0 && r.top < innerHeight};
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+})();
 /* hero robot: eyes follow the cursor, occasional blink */
 (() => {
   const svg = $('#botSvg'); if (!svg) return;
   const parts = $$('.iris, .eye-glow', svg);
   const MX = 7.5, MY = 2.6;
   let tx = 0, ty = 0, x = 0, y = 0, last = 0;
-  const aim = (cx, cy) => {
+  const aim = (cx, cy, idle) => {
     const m = svg.getScreenCTM(); if (!m) return;
     const ex = 828 * m.a + m.e, ey = 233 * m.d + m.f;
     const dx = cx - ex, dy = cy - ey, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260);
-    tx = dx / d * MX * k; ty = dy / d * MY * k * 1.6; ty = Math.max(-MY, Math.min(MY, ty)); last = performance.now();
+    tx = dx / d * MX * k; ty = dy / d * MY * k * 1.6; ty = Math.max(-MY, Math.min(MY, ty)); if (!idle) last = performance.now();
   };
   addEventListener('pointermove', e => aim(e.clientX, e.clientY), {passive: true});
   addEventListener('pointerdown', e => aim(e.clientX, e.clientY), {passive: true});
   const draw = () => {
-    if (performance.now() - last > 3500) { const t = performance.now() / 1000; tx = Math.sin(t * .7) * MX * .55; ty = Math.sin(t * 1.1) * MY * .4; }
+    const bp = window.__bfly; if (performance.now() - last > 3500 && bp && bp.on) aim(bp.x, bp.y, 1);
+    else if (performance.now() - last > 3500) { const t = performance.now() / 1000; tx = Math.sin(t * .7) * MX * .55; ty = Math.sin(t * 1.1) * MY * .4; }
     x += (tx - x) * .14; y += (ty - y) * .14;
     parts.forEach(p => { const cx = +p.dataset.cx + x, cy = +p.dataset.cy + y; if (p.tagName === 'use') { p.setAttribute('x', cx); p.setAttribute('y', cy); } else { p.setAttribute('cx', cx); p.setAttribute('cy', cy); } });
     requestAnimationFrame(draw);
