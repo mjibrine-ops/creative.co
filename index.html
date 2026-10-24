@@ -74,9 +74,9 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 .hero .glow{position:absolute;left:0;top:0;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(242,68,5,.22),rgba(242,68,5,0) 60%);pointer-events:none;transform:translate(calc(var(--mx,25%) - 450px),calc(var(--my,30%) - 450px));transition:transform .6s ease-out;z-index:0}
 .hero>.wrap{position:relative;z-index:2;width:100%;pointer-events:none}
 .hero .copy{max-width:600px;pointer-events:auto}
-.hero h1{font-family:var(--display);font-size:clamp(56px,8vw,124px);font-weight:800;line-height:.94;letter-spacing:-.04em;margin-top:22px}
+.hero h1{font-family:var(--display);font-size:clamp(46px,6.4vw,100px);font-weight:800;line-height:.94;letter-spacing:-.04em;margin-top:22px}
 .hero h1 em{font-style:normal;color:var(--orange)}
-.hero h1 .w{display:inline-block;padding-right:.08em;-webkit-mask-image:linear-gradient(90deg,#000 45%,transparent 55%);mask-image:linear-gradient(90deg,#000 45%,transparent 55%);-webkit-mask-size:240% 100%;mask-size:240% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:100% 0;mask-position:100% 0;animation:sweepIn 1.15s cubic-bezier(.45,.1,.2,1) .25s both}
+.hero h1 .w{display:inline-block;padding:0 .08em .18em 0;margin-bottom:-.18em;-webkit-mask-image:linear-gradient(90deg,#000 45%,transparent 55%);mask-image:linear-gradient(90deg,#000 45%,transparent 55%);-webkit-mask-size:240% 100%;mask-size:240% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:100% 0;mask-position:100% 0;animation:sweepIn 1.15s cubic-bezier(.45,.1,.2,1) .25s both}
 .hero h1 .w:nth-child(3){animation-delay:1.05s}
 @keyframes sweepIn{from{-webkit-mask-position:100% 0;mask-position:100% 0;transform:translateX(-.12em)}to{-webkit-mask-position:0 0;mask-position:0 0;transform:none}}
 @media (prefers-reduced-motion:reduce){.hero h1 .w{-webkit-mask-image:none;mask-image:none;animation:none}}
