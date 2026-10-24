@@ -188,9 +188,9 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 /* filters */
 .chips{display:flex;flex-wrap:nowrap;gap:clamp(4px,.6vw,8px);margin-bottom:28px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;white-space:nowrap;font-family:var(--display);font-size:clamp(9.5px,.85vw,12px);font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:clamp(7px,.7vw,10px) clamp(10px,1vw,16px);border-radius:999px;border:1px solid var(--line);color:var(--body);transition:all .2s;background:var(--paper)}
-.chip:hover{border-color:var(--ink);color:var(--ink)}
-.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip{flex:none;white-space:nowrap;font-family:var(--display);font-size:clamp(9.5px,.85vw,12px);font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:clamp(7px,.7vw,10px) clamp(10px,1vw,16px);border-radius:999px;border:1px solid var(--orange);color:#141414;transition:all .2s;background:var(--orange)}
+.chip:hover{background:var(--orange-hot);border-color:var(--orange-hot);color:#141414}
+.chip.on{background:#FDFDFC;color:#141414;border-color:#FDFDFC}
 [data-cat].off{display:none}
 .empty{display:none;color:var(--muted);padding:24px 0}
 .empty.show{display:block}
