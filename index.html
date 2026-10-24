@@ -89,10 +89,10 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 /* robot visual: eyes follow the cursor */
 .bot{position:absolute;z-index:1;top:0;bottom:0;right:0;width:68%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 26%);mask-image:linear-gradient(90deg,transparent 0,#000 26%)}
 .bot svg{display:block;width:100%;height:100%}
-.bfly{position:absolute;left:0;top:0;z-index:3;width:104px;height:102px;margin:-51px 0 0 -52px;pointer-events:none;will-change:transform;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));opacity:0;transition:opacity .6s}
+.bfly{position:absolute;left:0;top:0;z-index:3;width:132px;height:88px;margin:-44px 0 0 -66px;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 14px rgba(242,68,5,.45)) drop-shadow(0 14px 16px rgba(0,0,0,.5));opacity:0;transition:opacity .6s}
 .bfly.on{opacity:1}
-.bfly i{display:block;width:100%;height:100%;background:url(img/butterfly.webp) 0 0/1000% 100% no-repeat}
-@media (max-width:860px){.bfly{width:64px;height:62px;margin:-31px 0 0 -32px}}
+.bfly i{display:block;width:100%;height:100%;background:url(img/butterfly.webp) 0 0/900% 100% no-repeat}
+@media (max-width:860px){.bfly{width:96px;height:64px;margin:-32px 0 0 -48px}}
 @media (prefers-reduced-motion:reduce){.bfly{display:none}}
 .bot .eye-glow{filter:url(#eyeBlur);opacity:.55;mix-blend-mode:screen}
 .hero .scroll{position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);width:26px;height:42px;border:1.5px solid rgba(253,253,252,.35);border-radius:14px;display:none}
@@ -501,31 +501,35 @@ setTimeout(() => $$('.reveal').forEach(el => el.classList.add('in')), 4000);
 /* hero glow follows the cursor */
 const hero = $('#hero');
 
-/* hero butterfly: follows the cursor inside the hero, wanders when idle */
+/* hero butterfly: follows the cursor inside the hero and stays with it when the cursor rests */
 (() => {
   const el = $('#bfly'), spr = el && el.firstElementChild; if (!el || reduce) return;
-  const FR = 10; let x = 0, y = 0, tx = 0, ty = 0, vx = 0, vy = 0, f = 0, inside = false, lastMove = 0, t0 = performance.now(), init = false;
+  const N = 9, CYC = {front: [0, 1, 2, 1], right: [3, 4, 5, 4], left: [6, 7, 8, 7]};
+  let x = 0, y = 0, tx = 0, ty = 0, vx = 0, vy = 0, ph = 0, face = 'front', faceHold = 0, init = false;
+  const OX = 40, OY = -36;
   const home = () => { const w = hero.clientWidth, h = hero.clientHeight, small = w < 861; return [w * (small ? .72 : .62), h * (small ? .14 : .22)]; };
-  hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); tx = e.clientX - r.left + 34; ty = e.clientY - r.top - 30; inside = true; lastMove = performance.now(); }, {passive: true});
-  hero.addEventListener('pointerdown', e => { const r = hero.getBoundingClientRect(); tx = e.clientX - r.left + 34; ty = e.clientY - r.top - 30; inside = true; lastMove = performance.now(); }, {passive: true});
-  hero.addEventListener('pointerleave', () => { inside = false; });
-  let prev = performance.now();
+  const setT = e => { const r = hero.getBoundingClientRect(); tx = e.clientX - r.left + OX; ty = e.clientY - r.top + OY; };
+  hero.addEventListener('pointermove', setT, {passive: true});
+  hero.addEventListener('pointerdown', setT, {passive: true});
+  let prev = performance.now(); const t0 = prev;
   const step = now => {
     const dt = Math.min(50, now - prev) / 16.67; prev = now; const t = (now - t0) / 1000;
     const w = hero.clientWidth, h = hero.clientHeight;
-    if (!init) { [x, y] = home(); tx = x; ty = y; init = true; el.classList.add('on'); }
-    let gx = tx, gy = ty;
-    if (!inside || now - lastMove > 2500) { const [hx, hy] = home(); gx = hx + Math.sin(t * .55) * Math.min(160, w * .2) + Math.sin(t * 1.7) * 18; gy = hy + Math.sin(t * .9) * 50 + Math.cos(t * 2.3) * 10; }
-    else { gx += Math.sin(t * 2.1) * 10; gy += Math.cos(t * 2.7) * 8; }
-    gx = Math.max(40, Math.min(w - 40, gx)); gy = Math.max(40, Math.min(h - 40, gy));
-    const ax = (gx - x) * .0035, ay = (gy - y) * .0035;
-    vx = (vx + ax * dt * 16) * Math.pow(.86, dt); vy = (vy + ay * dt * 16) * Math.pow(.86, dt);
+    if (!init) { [x, y] = home(); [tx, ty] = [x, y]; init = true; el.classList.add('on'); }
+    // hover gently around the target; never wanders off
+    let gx = tx + Math.sin(t * 1.9) * 9 + Math.sin(t * 3.7) * 3, gy = ty + Math.cos(t * 2.4) * 7;
+    gx = Math.max(50, Math.min(w - 50, gx)); gy = Math.max(40, Math.min(h - 40, gy));
+    vx = (vx + (gx - x) * .0055 * dt * 16) * Math.pow(.84, dt); vy = (vy + (gy - y) * .0055 * dt * 16) * Math.pow(.84, dt);
     x += vx * dt; y += vy * dt;
     const sp = Math.hypot(vx, vy);
-    f = (f + dt * (.42 + Math.min(.5, sp * .06))) % FR;
-    spr.style.backgroundPosition = `${Math.floor(f) * 100 / (FR - 1)}% 0`;
-    const tilt = Math.max(-28, Math.min(28, vx * 3.2)), bob = Math.sin(t * 7) * 2;
-    el.style.transform = `translate(${x.toFixed(1)}px, ${(y + bob).toFixed(1)}px) rotate(${tilt.toFixed(1)}deg)`;
+    // pick the view: side profile when flying sideways, open wings when hovering
+    const want = Math.abs(vx) > 2.2 && Math.abs(vx) > Math.abs(vy) * .8 ? (vx > 0 ? 'right' : 'left') : 'front';
+    if (want !== face && now > faceHold) { face = want; faceHold = now + 260; }
+    ph = (ph + dt * (.2 + Math.min(.28, sp * .03))) % 4;
+    const fr = CYC[face][Math.floor(ph)];
+    spr.style.backgroundPosition = `${fr * 100 / (N - 1)}% 0`;
+    const tilt = face === 'front' ? Math.max(-18, Math.min(18, vx * 2.4)) : Math.max(-14, Math.min(14, vy * 2));
+    el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${tilt.toFixed(1)}deg)`;
     const r = hero.getBoundingClientRect(); window.__bfly = {x: r.left + x, y: r.top + y, on: r.bottom > 0 && r.top < innerHeight};
     requestAnimationFrame(step);
   };
