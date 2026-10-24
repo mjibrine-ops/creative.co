@@ -69,21 +69,54 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 @media (max-width:980px){.links{display:none}.burger{display:grid}.nav .wrap{height:64px}.nav .cta{padding:11px 16px;font-size:12px}.nav .right{gap:10px}}
 
 /* hero */
-.hero{position:relative;overflow:hidden;padding-block:clamp(56px,8vw,120px) clamp(40px,6vw,80px)}
-.hero .glow{position:absolute;left:0;top:0;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(242,68,5,.26),rgba(242,68,5,0) 60%);pointer-events:none;transform:translate(calc(var(--mx,70%) - 450px),calc(var(--my,20%) - 450px));transition:transform .6s ease-out}
-.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:48px;align-items:center}
-.hero h1{font-family:var(--display);font-size:clamp(54px,9vw,132px);font-weight:800;line-height:.98;letter-spacing:-.035em;margin-top:22px}
+.hero{position:relative;overflow:hidden;min-height:calc(100svh - 72px);display:flex;align-items:center;padding-block:clamp(56px,7vw,104px)}
+.hero .glow{position:absolute;left:0;top:0;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(242,68,5,.22),rgba(242,68,5,0) 60%);pointer-events:none;transform:translate(calc(var(--mx,25%) - 450px),calc(var(--my,30%) - 450px));transition:transform .6s ease-out;z-index:0}
+.hero>.wrap{position:relative;z-index:2;width:100%;pointer-events:none}
+.hero .copy{max-width:600px;pointer-events:auto}
+.hero h1{font-family:var(--display);font-size:clamp(56px,8vw,124px);font-weight:800;line-height:.94;letter-spacing:-.04em;margin-top:22px}
 .hero h1 em{font-style:normal;color:var(--orange)}
-.hero h1 .w{display:inline-block;animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.hero h1 .w{display:inline-block;animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
 .hero h1 .w:nth-child(3){animation-delay:.12s}
+.hero .sector{margin-top:26px;font-family:var(--display);font-size:clamp(17px,1.6vw,22px);font-weight:600;letter-spacing:-.01em;display:flex;flex-wrap:wrap;gap:.35em;align-items:baseline}
+.hero .rot{position:relative;display:inline-grid;color:var(--paper)}
+.hero .rot span{grid-area:1/1;white-space:nowrap;opacity:0;transform:translateY(.6em);transition:opacity .45s ease,transform .45s ease;border-bottom:2px solid var(--orange);padding-bottom:2px}
+.hero .rot span.on{opacity:1;transform:none}
+.hero .rot span.out{opacity:0;transform:translateY(-.6em);transition-duration:.25s}
+.hero .sector .pre{color:var(--body-on-dark);font-weight:500}
+.hero .lead{margin-top:18px;max-width:46ch}
+.hero .svc{margin-top:20px;font-family:var(--display);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:2}
+.hero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+/* work wall */
+.wall{position:absolute;z-index:1;top:0;bottom:0;right:0;width:min(50%,760px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28%);mask-image:linear-gradient(90deg,transparent 0,#000 28%)}
+.wall .tilt{position:absolute;inset:-18% -8% -18% 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;transform:rotate(-7deg);transform-origin:center}
+.wall .col{display:flex;flex-direction:column;gap:16px;animation:wallUp var(--dur,46s) linear infinite;will-change:transform}
+.wall .col:nth-child(2){animation-direction:reverse;--dur:54s}
+.wall .col:nth-child(3){--dur:40s}
+.wall:hover .col,.wall:focus-within .col{animation-play-state:paused}
 @keyframes rise{from{opacity:0;transform:translateY(.35em)}to{opacity:1;transform:none}}
-.hero .lead{margin-top:28px}
-.hero .svc{margin-top:20px;font-family:var(--display);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:2}
-.hero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
-.hero .mark{justify-self:end;width:min(100%,420px);animation:rise 1s .2s cubic-bezier(.2,.7,.2,1) both}
-.hero .mark img{width:100%;height:auto}
-@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}.hero .mark{justify-self:start;width:min(60%,260px);order:-1}}
-@media (prefers-reduced-motion:reduce){.hero h1 .w,.hero .mark{animation:none}.hero .glow{transition:none}}
+@keyframes wallUp{to{transform:translateY(-50%)}}
+.tile{position:relative;display:block;width:100%;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--ink-2);flex:none}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .4s}
+.tile .cap{position:absolute;inset:auto 0 0 0;padding:28px 14px 12px;background:linear-gradient(transparent,rgba(20,20,20,.88));text-align:left;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s}
+.tile .cap b{display:block;font-family:var(--display);font-size:14px;font-weight:700;color:var(--paper)}
+.tile .cap i{font-style:normal;font-family:var(--display);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+.wall:hover .tile img{filter:brightness(.6) saturate(.8)}
+.wall .tile:hover img,.wall .tile:focus-visible img{filter:none;transform:scale(1.06)}
+.tile:hover .cap,.tile:focus-visible .cap{opacity:1;transform:none}
+.hero .hint{position:absolute;z-index:2;right:var(--gutter-r);bottom:22px;font-family:var(--display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(253,253,252,.6);background:rgba(20,20,20,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:8px 14px;border-radius:999px;pointer-events:none}
+.hero .scroll{position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);width:26px;height:42px;border:1.5px solid rgba(253,253,252,.35);border-radius:14px;display:none}
+.hero .scroll::after{content:"";position:absolute;left:50%;top:8px;width:3px;height:8px;margin-left:-1.5px;border-radius:2px;background:var(--orange);animation:cue 1.8s ease-in-out infinite}
+@keyframes cue{0%{opacity:0;transform:translateY(-2px)}40%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
+@media (min-width:861px){.hero .scroll{display:block;left:calc(var(--gutter-l) + max(0px,(100vw - 1280px)/2) + 13px)}}
+@media (max-width:860px){
+  .hero{flex-direction:column;align-items:stretch;min-height:0;padding-bottom:0}
+  .hero>.wrap{order:1}.wall{order:2}
+  .hero .copy{max-width:none}
+  .wall{position:relative;width:auto;height:360px;margin-top:44px;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 78%,transparent);mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 78%,transparent)}
+  .wall .tilt{inset:-30% -12%;gap:12px}.wall .col{gap:12px}
+  .hero .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){.hero h1 .w,.wall .col,.hero .scroll::after{animation:none}.hero .glow{transition:none}.hero .rot span{transition:none}}
 
 /* marquee */
 .marquee{border-top:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);padding-block:28px;overflow:hidden;position:relative}
@@ -305,16 +338,19 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 </header>
 
 <main id="top">
-<section class="hero dark" id="hero"><div class="glow"></div><div class="wrap">
-  <div>
+<section class="hero dark" id="hero"><div class="glow"></div>
+<div class="wall" id="wall" aria-label="Selected projects"><div class="tilt" id="wallTilt"></div></div>
+<div class="wrap"><div class="copy">
     <p class="eyebrow">International creative agency · Beirut · Dubai</p>
     <h1><span class="w">Creative</span><br><span class="w"><em>Agency</em></span></h1>
+    <p class="sector"><span class="pre">Building brands in</span> <span class="rot" id="rot" aria-live="polite"><span class="on">beauty &amp; wellness</span><span>food &amp; drink</span><span>fashion &amp; lifestyle</span><span>home &amp; interiors</span></span></p>
     <p class="lead">Bringing your vision to life. We build brands from the first sketch to the final post: identity and packaging, photography and film, AI-powered ads, and the social content that keeps a brand alive every day.</p>
     <p class="svc">Branding · Design · Photography · Videography · Web Design · UX/UI</p>
     <div class="actions"><a class="cta" href="#branding">See the work</a><a class="cta ghost" href="#contact">Start a project</a></div>
-  </div>
-  <div class="mark"><img src="img/logo_cc_white.png" alt="Creative Co. logo" width="591" height="671"></div>
-</div></section>
+</div></div>
+<p class="hint">Hover to pause · click a project</p>
+<a class="scroll" href="#about" aria-label="Scroll down"></a>
+</section>
 
 <section class="marquee dark" aria-label="Brands we have worked with"><p class="label">Brands we have worked with · hover to pause · click a logo to open its project</p><div class="track" id="track"></div></section>
 
@@ -459,7 +495,21 @@ setTimeout(() => $$('.reveal').forEach(el => el.classList.add('in')), 4000);
 
 /* hero glow follows the cursor */
 const hero = $('#hero');
-if (!reduce && matchMedia('(pointer:fine)').matches) hero.addEventListener('mousemove', e => { const r = hero.getBoundingClientRect(); hero.style.setProperty('--mx', (e.clientX - r.left) + 'px'); hero.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+
+/* hero work wall */
+(() => {
+  const cols = [
+    [['agleam',2],['laissetomber',2],['panem',2],['terracotta',3],['noma',2],['gam',3]],
+    [['matchamates',2],['pastello',2],['kur',2],['puffik',2],['minimodes',3],['drz',2]],
+    [['matchamates',3],['nude',2],['halakastoun',2],['salmontini',2],['panem',3],['meraki',2]]
+  ];
+  const tile = ([k, n], dup) => { const b = DATA.brands[caseIndex[k]]; if (!b) return '';
+    return `<button type="button" class="tile" data-case="${k}"${dup ? ' tabindex="-1" aria-hidden="true"' : ''} aria-label="Open ${esc(b.name)} project"><img src="img/gal_${k}_${n}.jpg" alt="" loading="${dup ? 'lazy' : 'eager'}" decoding="async"><span class="cap"><b>${esc(b.name)}</b><i>${esc(b.sector)}</i></span></button>`; };
+  $('#wallTilt').innerHTML = cols.map(c => `<div class="col">${c.map(t => tile(t)).join('')}${c.map(t => tile(t, 1)).join('')}</div>`).join('');
+  $('#wall').addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) openBrand(caseIndex[t.dataset.case]); });
+  const words = $$('#rot span'); let w = 0;
+  if (!reduce) setInterval(() => { const o = words[w]; o.classList.remove('on'); o.classList.add('out'); setTimeout(() => o.classList.remove('out'), 450); w = (w + 1) % words.length; words[w].classList.add('on'); }, 2600);
+})();if (!reduce && matchMedia('(pointer:fine)').matches) hero.addEventListener('mousemove', e => { const r = hero.getBoundingClientRect(); hero.style.setProperty('--mx', (e.clientX - r.left) + 'px'); hero.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
 
 /* count-up when the stats band enters view */
 function countUp() { $$('.stats .n').forEach(el => { const end = +el.dataset.count, suf = el.dataset.suffix || ''; if (reduce) return; const t0 = performance.now(), d = 1300; const tick = now => { const p = Math.min(1, (now - t0) / d), v = Math.round(end * (1 - Math.pow(1 - p, 3))); el.textContent = v + suf; if (p < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }); }
