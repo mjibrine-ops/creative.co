@@ -75,16 +75,11 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 .hero>.wrap{position:relative;z-index:2;width:100%;pointer-events:none}
 .hero .copy{max-width:600px;pointer-events:auto}
 .hero h1{font-family:var(--display);font-size:clamp(56px,8vw,124px);font-weight:800;line-height:.94;letter-spacing:-.04em;margin-top:22px}
-.hero h1 .ch{display:inline-block;opacity:0;transform:translateY(.06em);filter:blur(3px);transition:opacity .16s ease-out,transform .2s cubic-bezier(.2,.7,.2,1),filter .16s ease-out}
-.hero h1 .ch.on{opacity:1;transform:none;filter:none}
-.hero h1 .caret{display:inline-block;position:relative;width:0;height:.82em;vertical-align:-.02em}
-.hero h1 .caret::after{content:"";position:absolute;left:.04em;top:0;bottom:0;width:.07em;border-radius:.04em;background:var(--orange);animation:caret 1s steps(1) infinite}
-.hero h1 .caret.typing::after{animation:none}
-.hero h1 .caret.done{opacity:0;transition:opacity .6s ease 2.4s}
-@keyframes caret{50%{opacity:0}}
 .hero h1 em{font-style:normal;color:var(--orange)}
-.hero h1 .w{display:inline-block;animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
-.hero h1 .w:nth-child(3){animation-delay:.12s}
+.hero h1 .w{display:inline-block;padding-right:.08em;-webkit-mask-image:linear-gradient(90deg,#000 45%,transparent 55%);mask-image:linear-gradient(90deg,#000 45%,transparent 55%);-webkit-mask-size:240% 100%;mask-size:240% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:100% 0;mask-position:100% 0;animation:sweepIn 1.15s cubic-bezier(.45,.1,.2,1) .25s both}
+.hero h1 .w:nth-child(3){animation-delay:1.05s}
+@keyframes sweepIn{from{-webkit-mask-position:100% 0;mask-position:100% 0;transform:translateX(-.12em)}to{-webkit-mask-position:0 0;mask-position:0 0;transform:none}}
+@media (prefers-reduced-motion:reduce){.hero h1 .w{-webkit-mask-image:none;mask-image:none;animation:none}}
 .hero .sector{margin-top:26px;font-family:var(--display);font-size:clamp(17px,1.6vw,22px);font-weight:600;letter-spacing:-.01em;display:flex;flex-wrap:wrap;gap:.35em;align-items:baseline}
 .hero .rot{position:relative;display:inline-grid;color:var(--paper)}
 .hero .rot span{grid-area:1/1;white-space:nowrap;opacity:0;transform:translateY(.6em);transition:opacity .45s ease,transform .45s ease;border-bottom:2px solid var(--orange);padding-bottom:2px}
@@ -545,24 +540,6 @@ toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if
   const start = () => { if (!run) { run = true; requestAnimationFrame(tick); } };
   if (reduce) { run = true; tick(); run = false; return; }
   if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) start(); else run = false; })).observe(sec); else start();
-})();
-/* hero headline: smooth typing */
-(() => {
-  const h = $('#typeH'); if (!h || reduce) return;
-  h.querySelectorAll('.w').forEach(w => { w.classList.remove('w'); w.style.animation = 'none'; });
-  const chars = [];
-  const split = node => { [...node.childNodes].forEach(n => { if (n.nodeType === 3) { const frag = document.createDocumentFragment(); [...n.textContent].forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = c; frag.appendChild(sp); chars.push(sp); }); n.replaceWith(frag); } else if (n.nodeType === 1 && n.tagName !== 'BR') split(n); }); };
-  split(h);
-  const caret = document.createElement('span'); caret.className = 'caret typing'; caret.setAttribute('aria-hidden', 'true');
-  chars[0].before(caret);
-  let i = 0;
-  const next = () => {
-    if (i >= chars.length) { caret.classList.remove('typing'); setTimeout(() => caret.classList.add('done'), 50); return; }
-    const c = chars[i++]; c.classList.add('on'); c.after(caret);
-    const pause = i === 8 ? 380 : 70 + Math.random() * 55;
-    setTimeout(next, pause);
-  };
-  setTimeout(next, 350);
 })();
 /* hero butterfly: follows the cursor inside the hero and stays with it when the cursor rests */
 (() => {
