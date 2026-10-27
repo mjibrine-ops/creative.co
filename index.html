@@ -412,13 +412,6 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 
 <section class="marquee dark" aria-label="Brands we have worked with"><p class="label">Brands we have worked with · hover to pause · click a logo to open its project</p><div class="track" id="track"></div></section>
 
-<section class="stats"><div class="wrap">
-  <div><div class="n" data-count="100" data-suffix="+">100+</div><div class="l">brands worked with</div></div>
-  <div><div class="n" data-count="30">30</div><div class="l">identity marks in this portfolio</div></div>
-  <div><div class="n" data-count="16">16</div><div class="l">full brand identities</div></div>
-  <div><div class="n" data-count="16">16</div><div class="l">social media programmes</div></div>
-</div></section>
-
 <section id="about" class="band about dark"><div class="wrap">
   <div class="reveal">
     <p class="eyebrow">Who we are</p>
@@ -700,9 +693,7 @@ toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if
   if (!reduce) setInterval(() => { const o = words[w]; o.classList.remove('on'); o.classList.add('out'); setTimeout(() => o.classList.remove('out'), 450); w = (w + 1) % words.length; words[w].classList.add('on'); }, 2600);
 })();if (!reduce && matchMedia('(pointer:fine)').matches) hero.addEventListener('mousemove', e => { const r = hero.getBoundingClientRect(); hero.style.setProperty('--mx', (e.clientX - r.left) + 'px'); hero.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
 
-/* count-up when the stats band enters view */
-function countUp() { $$('.stats .n').forEach(el => { const end = +el.dataset.count, suf = el.dataset.suffix || ''; if (reduce) return; const t0 = performance.now(), d = 1300; const tick = now => { const p = Math.min(1, (now - t0) / d), v = Math.round(end * (1 - Math.pow(1 - p, 3))); el.textContent = v + suf; if (p < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }); }
-if ('IntersectionObserver' in window) { const so = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { countUp(); so.disconnect(); } }, {threshold: .3}); so.observe($('.stats')); }
+
 
 /* studio clocks */
 function clocks() { for (const [id, tz] of [['beirut', 'Asia/Beirut'], ['dubai', 'Asia/Dubai']]) { try { const now = new Date(); $('#t-' + id).textContent = new Intl.DateTimeFormat('en-GB', {timeZone: tz, hour: '2-digit', minute: '2-digit'}).format(now); const h = +new Intl.DateTimeFormat('en-GB', {timeZone: tz, hour: '2-digit', hour12: false}).format(now); const wd = new Intl.DateTimeFormat('en-GB', {timeZone: tz, weekday: 'short'}).format(now); const openNow = h >= 9 && h < 18 && !['Sat', 'Sun'].includes(wd); $('#s-' + id).textContent = openNow ? 'Studio hours · open now' : 'Outside studio hours'; } catch (e) {} } }
