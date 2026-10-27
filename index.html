@@ -193,6 +193,20 @@ h2.title{font-family:var(--display);font-size:clamp(32px,4.4vw,56px);font-weight
 .empty.show{display:block}
 
 /* logofolio */
+/* logofolio: 9 squares, logos rotate in from below */
+.logos{display:none!important}
+.lgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,16px);max-width:880px;margin:0 auto}
+.lsq{position:relative;min-width:0;aspect-ratio:1;border-radius:clamp(10px,1.4vw,16px);background:#F4F3F0;overflow:hidden;transition:background .2s}
+.lsq:hover{background:#fff}
+.lsq .it{position:absolute;inset:0;display:grid;place-items:center;padding:20%;transition:transform .75s cubic-bezier(.22,.8,.24,1),opacity .6s ease}
+.lsq .it img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.lsq .it.in{transform:translateY(40%);opacity:0}
+.lsq .it.out{transform:translateY(-40%);opacity:0}
+.lsq button.it{cursor:pointer}
+.lsq .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:8px 10px;font-family:var(--display);font-size:11px;font-weight:600;letter-spacing:.08em;background:#141414;color:#FDFDFC;transform:translateY(100%);transition:transform .25s;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lsq .cap i{font-style:normal;color:var(--orange)}
+.lsq:hover .cap,.lsq:focus-within .cap{transform:none}
+@media (prefers-reduced-motion:reduce){.lsq .it{transition:none}}
 .logos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
 .logo{min-width:0;position:relative;background:#F4F3F0;border-radius:14px;aspect-ratio:1.15;display:grid;place-items:center;padding:14% 16%;transition:background .2s;overflow:hidden}
 .logo button{position:absolute;inset:0;display:grid;place-items:center;padding:14% 16%}
@@ -428,6 +442,7 @@ dialog .close{position:absolute;top:14px;right:14px;width:40px;height:40px;borde
 <section id="logofolio" class="band light"><div class="wrap">
   <div class="head reveal"><div><p class="eyebrow">Logofolio</p><h2 class="title">Identity marks</h2></div><p class="count" id="logocount">30 marks</p></div>
   <div class="chips" data-group="logos" role="group" aria-label="Filter by sector"><button type="button" class="chip on" data-cat="all">All work</button><button type="button" class="chip" data-cat="beauty">Beauty &amp; wellness</button><button type="button" class="chip" data-cat="food">Food &amp; drink</button><button type="button" class="chip" data-cat="fashion">Fashion &amp; lifestyle</button><button type="button" class="chip" data-cat="home">Home, interiors &amp; industry</button></div>
+  <div class="lgrid" id="lgrid" aria-live="off"></div>
   <ul class="logos" id="logos"><li class="logo has" data-cat="fashion"><button type="button" data-case="agleam" aria-label="Open Agleam case study"><img src="img/logo_agleam.png" alt="Agleam logo" loading="lazy"><span class="cap">Agleam <i>· case study</i></span></button></li><li class="logo" data-cat="beauty"><img src="img/logo_solara.png" alt="Solara logo" loading="lazy"><span class="cap">Solara</span></li><li class="logo has" data-cat="fashion"><button type="button" data-case="minimodes" aria-label="Open Minimodes case study"><img src="img/logo_minimodes.png" alt="Minimodes logo" loading="lazy"><span class="cap">Minimodes <i>· case study</i></span></button></li><li class="logo" data-cat="fashion"><img src="img/logo_avantclub.png" alt="Avant Club logo" loading="lazy"><span class="cap">Avant Club</span></li><li class="logo" data-cat="home"><img src="img/logo_triofox.png" alt="Triofox logo" loading="lazy"><span class="cap">Triofox</span></li><li class="logo" data-cat="fashion"><img src="img/logo_shantaa.png" alt="Shantaa logo" loading="lazy"><span class="cap">Shantaa</span></li><li class="logo has" data-cat="fashion"><button type="button" data-case="halakastoun" aria-label="Open Hala Kastoun case study"><img src="img/logo_halakastoun.png" alt="Hala Kastoun logo" loading="lazy"><span class="cap">Hala Kastoun <i>· case study</i></span></button></li><li class="logo" data-cat="food"><img src="img/logo_fawaz.png" alt="Kalaat Fawaz logo" loading="lazy"><span class="cap">Kalaat Fawaz</span></li><li class="logo has" data-cat="food"><button type="button" data-case="pastello" aria-label="Open Pastello case study"><img src="img/logo_pastello.png" alt="Pastello logo" loading="lazy"><span class="cap">Pastello <i>· case study</i></span></button></li><li class="logo" data-cat="home"><img src="img/logo_techcessories.png" alt="Techcessories logo" loading="lazy"><span class="cap">Techcessories</span></li><li class="logo has" data-cat="beauty"><button type="button" data-case="gam" aria-label="Open Gam case study"><img src="img/logo_gam.png" alt="Gam logo" loading="lazy"><span class="cap">Gam <i>· case study</i></span></button></li><li class="logo" data-cat="beauty"><img src="img/logo_ghadalakkis.png" alt="Ghada Lakkis Beauty Lab logo" loading="lazy"><span class="cap">Ghada Lakkis Beauty Lab</span></li><li class="logo has" data-cat="beauty"><button type="button" data-case="kur" aria-label="Open Kür case study"><img src="img/logo_kur.png" alt="Kür logo" loading="lazy"><span class="cap">Kür <i>· case study</i></span></button></li><li class="logo has" data-cat="food"><button type="button" data-case="salmontini" aria-label="Open Salmontini case study"><img src="img/logo_salmontini.png" alt="Salmontini logo" loading="lazy"><span class="cap">Salmontini <i>· case study</i></span></button></li><li class="logo has" data-cat="beauty"><button type="button" data-case="drz" aria-label="Open Dr. Z Clinic case study"><img src="img/logo_drz.png" alt="Dr. Z Clinic logo" loading="lazy"><span class="cap">Dr. Z Clinic <i>· case study</i></span></button></li><li class="logo" data-cat="food"><img src="img/logo_nutsandmore.png" alt="Nuts and More logo" loading="lazy"><span class="cap">Nuts and More</span></li><li class="logo" data-cat="food"><img src="img/logo_milkycrunch.png" alt="Milky Crunch logo" loading="lazy"><span class="cap">Milky Crunch</span></li><li class="logo has" data-cat="home"><button type="button" data-case="terracotta" aria-label="Open Terra Cotta case study"><img src="img/logo_terracotta.png" alt="Terra Cotta logo" loading="lazy"><span class="cap">Terra Cotta <i>· case study</i></span></button></li><li class="logo" data-cat="fashion"><img src="img/logo_atoutstyle.png" alt="À tout style logo" loading="lazy"><span class="cap">À tout style</span></li><li class="logo has" data-cat="home"><button type="button" data-case="noma" aria-label="Open Nōma case study"><img src="img/logo_noma.png" alt="Nōma logo" loading="lazy"><span class="cap">Nōma <i>· case study</i></span></button></li><li class="logo has" data-cat="fashion"><button type="button" data-case="laissetomber" aria-label="Open Laisse Tomber case study"><img src="img/logo_laissetomber.png" alt="Laisse Tomber logo" loading="lazy"><span class="cap">Laisse Tomber <i>· case study</i></span></button></li><li class="logo has" data-cat="food"><button type="button" data-case="matchamates" aria-label="Open Matcha Mates case study"><img src="img/logo_matchamates.png" alt="Matcha Mates logo" loading="lazy"><span class="cap">Matcha Mates <i>· case study</i></span></button></li><li class="logo has" data-cat="fashion"><button type="button" data-case="puffik" aria-label="Open PUFFIK case study"><img src="img/logo_puffik.png" alt="PUFFIK logo" loading="lazy"><span class="cap">PUFFIK <i>· case study</i></span></button></li><li class="logo" data-cat="home"><img src="img/logo_glassplus.png" alt="GlassPlus logo" loading="lazy"><span class="cap">GlassPlus</span></li><li class="logo" data-cat="food"><img src="img/logo_thegoat.png" alt="The G.O.A.T logo" loading="lazy"><span class="cap">The G.O.A.T</span></li><li class="logo" data-cat="home"><img src="img/logo_petfactory.png" alt="Pet Factory logo" loading="lazy"><span class="cap">Pet Factory</span></li><li class="logo" data-cat="food"><img src="img/logo_beitjeddi.png" alt="Beit Jeddi logo" loading="lazy"><span class="cap">Beit Jeddi</span></li><li class="logo" data-cat="food"><img src="img/logo_chocoree.png" alt="Chocorée logo" loading="lazy"><span class="cap">Chocorée</span></li><li class="logo" data-cat="food"><img src="img/logo_umamisushi.png" alt="Umami Sushi logo" loading="lazy"><span class="cap">Umami Sushi</span></li><li class="logo" data-cat="food"><img src="img/logo_beitsara.png" alt="Beit Sara logo" loading="lazy"><span class="cap">Beit Sara</span></li></ul>
   <p class="empty" id="logos-empty">No marks in this sector yet.</p>
 </div></section>
@@ -759,6 +774,36 @@ $$('.chip').forEach(c => c.addEventListener('click', () => { cat = c.dataset.cat
   };
   if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => { inView = en.isIntersecting; last = performance.now(); }), {threshold: .3}).observe(stage); else inView = true;
   build(); requestAnimationFrame(tick);
+})();
+/* logofolio: 9 squares; one square at a time swaps to the next logo, sliding up */
+(() => {
+  const grid = $('#lgrid'); if (!grid) return;
+  const all = $$('#logos .logo').map(li => { const im = $('img', li), b = $('button', li); return {src: im.getAttribute('src'), alt: im.alt, name: $('.cap', li).firstChild.textContent.trim(), key: b ? b.dataset.case : null, cat: li.dataset.cat}; });
+  const N = 9; let pool = [], next = 0, slots = [], timer = 0, inView = false, hover = false, lastSq = -1;
+  const item = (L, cls) => { const el = document.createElement(L.key ? 'button' : 'div'); el.className = 'it' + (cls ? ' ' + cls : ''); if (L.key) { el.type = 'button'; el.dataset.case = L.key; el.setAttribute('aria-label', 'Open ' + L.name + ' case study'); } el.innerHTML = `<img src="${L.src}" alt="${esc(L.alt)}" decoding="async">`; return el; };
+  const cap = L => L.name + (L.key ? ' <i>· case study</i>' : '');
+  const build = () => {
+    pool = all.filter(L => cat === 'all' || L.cat === cat); next = 0; slots = []; grid.innerHTML = '';
+    const n = Math.min(N, pool.length);
+    for (let i = 0; i < n; i++) { const L = pool[next++ % pool.length]; const sq = document.createElement('div'); sq.className = 'lsq'; sq.appendChild(item(L)); const c = document.createElement('span'); c.className = 'cap'; c.innerHTML = cap(L); sq.appendChild(c); grid.appendChild(sq); slots.push(L); }
+    next = n % Math.max(1, pool.length);
+  };
+  const swap = () => {
+    if (pool.length <= slots.length) return;
+    const sqs = $$('.lsq', grid); let i; do { i = Math.floor(Math.random() * sqs.length); } while (i === lastSq && sqs.length > 1); lastSq = i;
+    let L, guard = 0; do { L = pool[next++ % pool.length]; } while (slots.includes(L) && ++guard < pool.length);
+    const sq = sqs[i], old = $('.it', sq), nu = item(L, 'in');
+    sq.insertBefore(nu, old.nextSibling); slots[i] = L; $('.cap', sq).innerHTML = cap(L);
+    requestAnimationFrame(() => requestAnimationFrame(() => { nu.classList.remove('in'); old.classList.add('out'); }));
+    setTimeout(() => old.remove(), 800);
+  };
+  const loop = () => { clearTimeout(timer); timer = setTimeout(() => { if (inView && !hover && !reduce) swap(); loop(); }, 1500); };
+  grid.addEventListener('click', e => { const b = e.target.closest('button.it'); if (b && b.dataset.case in caseIndex) openBrand(caseIndex[b.dataset.case]); });
+  grid.addEventListener('pointerenter', () => hover = true); grid.addEventListener('pointerleave', () => hover = false);
+  $$('.chips[data-group="logos"] .chip').forEach(c => c.addEventListener('click', () => setTimeout(build, 0)));
+  $$('.chip').forEach(c => c.addEventListener('click', () => setTimeout(build, 0)));
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(en => inView = en.isIntersecting), {threshold: .25}).observe(grid); else inView = true;
+  build(); loop();
 })();
 /* case-study and feed modals */
 const dlg = $('#dlg'), modal = $('#modal'); let cur = {type: null, i: 0, g: 0};
