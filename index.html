@@ -716,6 +716,7 @@ $$('.chip').forEach(c => c.addEventListener('click', () => { cat = c.dataset.cat
   const pic = b => (b.gallery[0].includes('_logo') ? b.gallery[1] : b.gallery[0]) || b.gallery[0];
   const build = () => {
     list = DATA.brands.map((b, i) => i).filter(i => cat === 'all' || DATA.brands[i].cat === cat);
+    const first = list.findIndex(i => DATA.brands[i].key === 'puffik'); if (first > 0) list = list.slice(first).concat(list.slice(0, first));
     ring.innerHTML = list.map((bi, k) => { const w = document.querySelector(`#works .work[data-i="${bi}"]`); const imgs = w ? [...w.querySelectorAll('.open img')].map(im => `<img class="${im.className}" src="${im.getAttribute('src')}" alt="${esc(im.alt)}" decoding="async">`).join('') : `<img class="grid" src="${pic(DATA.brands[bi])}" alt="">`; return `<div class="bcard" data-k="${k}">${imgs}</div>`; }).join('');
     cards = $$('.bcard', ring); pos = target = 0; shown = -1; frame(true);
   };
